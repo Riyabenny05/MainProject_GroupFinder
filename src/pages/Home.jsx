@@ -1,31 +1,34 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, Grid } from '@mui/material';
 import StudyGroupCard from '../components/GroupCard';
 
-const groupList = [
-  {
-    title: 'Python Learners',
-    subject: 'Python Programming',
-    description: 'Beginners welcome! Learn syntax, OOP, and basic projects.',
-  },
-  {
-    title: 'ReactJS Masters',
-    subject: 'Frontend Web Development',
-    description: 'Explore React hooks, components, and MUI integration.',
-  },
-  {
-    title: 'Math Wizards',
-    subject: 'Calculus & Algebra',
-    description: 'Solve problems together and prepare for competitive exams.',
-  },
-  {
-    title: 'CTF Crackers',
-    subject: 'Cybersecurity',
-    description: 'Join this group to learn ethical hacking and CTF solving.',
-  },
-];
+const Home = () => {
+  const [groups, setGroups] = useState([]);
 
-const Dashboard = () => {
+  useEffect(() => {
+    // TEMPORARY: Dummy data since backend is not connected
+    setGroups([
+      {
+        _id: '1',
+        title: 'React Learners',
+        subject: 'Frontend Development',
+        description: 'Learn React, hooks, and component design.',
+      },
+      {
+        _id: '2',
+        title: 'Python Devs',
+        subject: 'Python Programming',
+        description: 'Explore Python basics, OOP, and projects.',
+      },
+      {
+        _id: '3',
+        title: 'Cyber Ninjas',
+        subject: 'Cybersecurity',
+        description: 'Learn ethical hacking and CTF challenges.',
+      },
+    ]);
+  }, []);
+
   return (
     <Box
       sx={{
@@ -50,18 +53,23 @@ const Dashboard = () => {
       </Typography>
 
       <Grid container spacing={10} justifyContent="center">
-        {groupList.map((group, i) => (
-          <Grid item key={i} xs={2} sm={6} md={4} lg={3}>
-            <StudyGroupCard
-              title={group.title}
-              subject={group.subject}
-              description={group.description}
-            />
-          </Grid>
-        ))}
+        {groups.length === 0 ? (
+          <Typography variant="h6" color="gray">No groups found.</Typography>
+        ) : (
+          groups.map(group => (
+            <Grid item key={group._id} xs={12} sm={6} md={4} lg={3}>
+              <StudyGroupCard
+                groupId={group._id}
+                title={group.title}
+                subject={group.subject}
+                description={group.description}
+              />
+            </Grid>
+          ))
+        )}
       </Grid>
     </Box>
   );
 };
 
-export default Dashboard;
+export default Home;

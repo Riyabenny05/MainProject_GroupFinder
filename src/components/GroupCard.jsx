@@ -1,7 +1,17 @@
 import React from 'react';
-import { Card, CardContent, CardActions, Button, Typography, Box } from '@mui/material';
+import { Card, CardContent, CardActions, Button, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
-const StudyGroupCard = ({ title, subject, description }) => {
+const StudyGroupCard = ({ title, subject, description, groupId }) => {
+  const navigate = useNavigate();
+
+  const handleJoin = () => {
+    // Navigate to group details with data
+    navigate(`/group/${groupId}`, {
+      state: { title, subject, description },
+    });
+  };
+
   return (
     <Card
       sx={{
@@ -26,7 +36,9 @@ const StudyGroupCard = ({ title, subject, description }) => {
         <Typography variant="body2">{description}</Typography>
       </CardContent>
       <CardActions sx={{ justifyContent: 'flex-end' }}>
-        <Button variant="outlined" size="small">Join</Button>
+        <Button variant="outlined" size="small" onClick={handleJoin}>
+          Join
+        </Button>
       </CardActions>
     </Card>
   );
