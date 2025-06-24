@@ -2,6 +2,7 @@
 import React from 'react';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
+import SignUp from './pages/SignUp';
 import GroupCard from './components/GroupCard';
 import Home from './pages/Home';
 import GroupDetails from './pages/GroupDetails';
@@ -15,7 +16,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/groupcard" element={<GroupCard />} />    
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/groupcard" element={<GroupCard />} />
         <Route path="/group/:id" element={<GroupDetails />} />
       </Routes>
     </div>
