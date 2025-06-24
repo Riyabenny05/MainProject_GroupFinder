@@ -11,7 +11,9 @@ import {
   useMediaQuery,
   useTheme,
   Paper,
+  Link as MuiLink,
 } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 
 const Login = () => {
   const theme = useTheme();
@@ -49,6 +51,7 @@ const Login = () => {
         <Typography variant="h5" textAlign="center" mb={3}>
           Login
         </Typography>
+
         <form onSubmit={handleLogin} autoComplete="off">
           <TextField
             label="Email"
@@ -96,6 +99,14 @@ const Login = () => {
             Login
           </Button>
         </form>
+
+        {/* Link to Sign Up */}
+        <Typography variant="body2" textAlign="center" sx={{ mt: 2 }}>
+          Don't have an account?{' '}
+          <MuiLink component={RouterLink} to="/signup" underline="hover">
+            Sign Up
+          </MuiLink>
+        </Typography>
       </Paper>
     </Box>
   );
