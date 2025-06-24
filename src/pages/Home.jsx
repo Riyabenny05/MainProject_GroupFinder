@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Grid } from '@mui/material';
+import { Box, Typography, Grid, Button, Modal, TextField } from '@mui/material';
 import StudyGroupCard from '../components/GroupCard';
 
 const Home = () => {
   const [groups, setGroups] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [groupName, setGroupName] = useState('');
+  const [members, setMembers] = useState('');
 
   useEffect(() => {
     // TEMPORARY: Dummy data since backend is not connected
@@ -29,6 +32,23 @@ const Home = () => {
     ]);
   }, []);
 
+  const handleCreateGroup = async (e) => {
+    e.preventDefault();
+    const newGroup = {
+      title: groupName,
+      subject: 'Custom Group',
+      description: `Members: ${members}`,
+    };
+
+    // Add to local state (or send to backend if connected)
+    setGroups([...groups, { ...newGroup, _id: Date.now().toString() }]);
+
+    // Reset and close
+    setGroupName('');
+    setMembers('');
+    setOpen(false);
+  };
+
   return (
     <Box
       sx={{
@@ -47,11 +67,19 @@ const Home = () => {
       <Typography
         variant="subtitle1"
         align="center"
-        sx={{ color: '#DDA0DD', mb: 10 }}
+        sx={{ color: '#DDA0DD', mb: 6 }}
       >
         Connect, Learn, and Grow with peers sharing the same interests.
       </Typography>
 
+      {/* Create Group Button */}
+      <Box display="flex" justifyContent="center" mb={6}>
+        <Button variant="contained" color="secondary" onClick={() => setOpen(true)}>
+          ➕ Create New Group
+        </Button>
+      </Box>
+
+      {/* Group Cards */}
       <Grid container spacing={10} justifyContent="center">
         {groups.length === 0 ? (
           <Typography variant="h6" color="gray">No groups found.</Typography>
@@ -68,6 +96,39 @@ const Home = () => {
           ))
         )}
       </Grid>
+
+      {/* Create Group Modal */}
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <Box
+          sx={{
+            position: 'absolute', top: '50%', left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400, bgcolor: 'white', color: 'black', p: 4, borderRadius: 2
+          }}
+        >
+          <Typography variant="h6" mb={2}>Create a New Group</Typography>
+          <form onSubmit={handleCreateGroup}>
+            <TextField
+              label="Group Name"
+              fullWidth
+              required
+              value={groupName}
+              onChange={(e) => setGroupName(e.target.value)}
+              margin="normal"
+            />
+            <TextField
+              label="Members (comma separated)"
+              fullWidth
+              value={members}
+              onChange={(e) => setMembers(e.target.value)}
+              margin="normal"
+            />
+            <Button type="submit" variant="contained" color="secondary" sx={{ mt: 2 }}>
+              Create Group
+            </Button>
+          </form>
+        </Box>
+      </Modal>
     </Box>
   );
 };
