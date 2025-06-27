@@ -1,33 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const Group = require('../models/Group');
+ 
+const auth = require('../middleware/authMiddleware');
+const { createGroup, getGroups, joinGroup, leaveGroup } = require('../controlers/groupController');
 
-// GET all groups
-router.get('/', async (req, res) => {
-  try {
-    const groups = await Group.find();
-    res.json(groups);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-// POST new group
-router.post('/', async (req, res) => {
-  const { title, subject, description } = req.body;
-
-  const newGroup = new Group({
-    title,
-    subject,
-    description,
-  });
-
-  try {
-    const savedGroup = await newGroup.save();
-    res.status(201).json(savedGroup);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
+router.get('/', getGroups);
+router.post('/', auth, createGroup);
+router.post('/:id/join', auth, joinGroup);
+router.post('/:id/leave', auth, leaveGroup);
 
 module.exports = router;
