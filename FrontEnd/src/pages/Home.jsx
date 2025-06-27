@@ -1,15 +1,62 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Grid, Button, Modal, TextField } from '@mui/material';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Menu,
+  MenuItem,
+  TextField,
+  Button,
+  Box,
+  Grid,
+  Modal
+} from '@mui/material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import NotificationsOffIcon from '@mui/icons-material/NotificationsOff';
+import LogoutIcon from '@mui/icons-material/Logout';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import StudyGroupCard from '../components/GroupCard';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
+  const navigate = useNavigate();
   const [groups, setGroups] = useState([]);
-  const [open, setOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [openCreateModal, setOpenCreateModal] = useState(false);
   const [groupName, setGroupName] = useState('');
   const [members, setMembers] = useState('');
 
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/login');
+  };
+
+  const handleCreateGroup = (e) => {
+    e.preventDefault();
+    const newGroup = {
+      _id: Date.now().toString(),
+      title: groupName,
+      subject: 'Custom Group',
+      description: `Members: ${members}`,
+    };
+    setGroups([...groups, newGroup]);
+    setGroupName('');
+    setMembers('');
+    setOpenCreateModal(false);
+    handleMenuClose();
+  };
+
   useEffect(() => {
-    // TEMPORARY: Dummy data since backend is not connected
     setGroups([
       {
         _id: '1',
@@ -32,81 +79,120 @@ const Home = () => {
     ]);
   }, []);
 
-  const handleCreateGroup = async (e) => {
-    e.preventDefault();
-    const newGroup = {
-      title: groupName,
-      subject: 'Custom Group',
-      description: `Members: ${members}`,
-    };
-
-    // Add to local state (or send to backend if connected)
-    setGroups([...groups, { ...newGroup, _id: Date.now().toString() }]);
-
-    // Reset and close
-    setGroupName('');
-    setMembers('');
-    setOpen(false);
-  };
+  const filteredGroups = groups.filter((group) =>
+    group.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <Box
-      sx={{
-        backgroundColor: 'black',
-        color: 'white',
-        width: '100vw',
-        minHeight: '100vh',
-        overflowX: 'hidden',
-        px: 4,
-        py: 8,
-      }}
-    >
-      <Typography variant="h2" align="center" gutterBottom>
-        🔍 Explore Study Groups
-      </Typography>
-      <Typography
-        variant="subtitle1"
-        align="center"
-        sx={{ color: '#DDA0DD', mb: 6 }}
-      >
-        Connect, Learn, and Grow with peers sharing the same interests.
-      </Typography>
+    <Box sx={{ backgroundColor: 'black', color: 'white', minHeight: '100vh' }}>
+      {/* Navbar */}
+      <AppBar position="static" sx={{ backgroundColor: 'black' }}>
+        <Toolbar>
+          
+          <TextField
+            size="small"
+            placeholder="Search groups"
+            variant="outlined"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            sx={{
+              backgroundColor: 'white',
+              borderRadius: 5,
+              mr: 4,
+              minWidth: '250px',
+            }}
+          />
+          <IconButton
+            color="inherit"
+            onClick={handleMenuClick}
+            sx={{ color: 'white' }}
+          >
+            <MoreVertIcon />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
 
-      {/* Create Group Button */}
-      <Box display="flex" justifyContent="center" mb={6}>
-        <Button variant="contained" color="secondary" onClick={() => setOpen(true)}>
-          ➕ Create New Group
-        </Button>
+      {/* Menu in Navbar */}
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+      >
+        <MenuItem onClick={() => setOpenCreateModal(true)}>
+          <AddCircleOutlineIcon sx={{ mr: 1 }} /> Create Group
+        </MenuItem>
+        <MenuItem onClick={handleMenuClose}>
+          <NotificationsOffIcon sx={{ mr: 1 }} /> Mute Notifications
+        </MenuItem>
+        <MenuItem onClick={handleLogout}>
+          <LogoutIcon sx={{ mr: 1 }} /> Logout
+        </MenuItem>
+      </Menu>
+
+      {/* Page Content */}
+      <Box sx={{ px: 4, py: 8 }}>
+        <Typography variant="h2" align="center" gutterBottom>
+          🔍 Explore Study Groups
+        </Typography>
+        <Typography
+          variant="subtitle1"
+          align="center"
+          sx={{ color: '#DDA0DD', mb: 6 }}
+        >
+          Connect, Learn, and Grow with peers sharing the same interests.
+        </Typography>
+
+        {/* Create Group Button in Middle of Page */}
+        <Box display="flex" justifyContent="center" mb={6}>
+          <Button
+            variant="contained"
+            color="secondary"
+            startIcon={<AddCircleOutlineIcon />}
+            onClick={() => setOpenCreateModal(true)}
+          >
+            Create New Group
+          </Button>
+        </Box>
+
+        {/* Group Cards */}
+        <Grid container spacing={6} justifyContent="center">
+          {filteredGroups.length === 0 ? (
+            <Typography variant="body1" color="gray">
+              No groups found.
+            </Typography>
+          ) : (
+            filteredGroups.map((group) => (
+              <Grid item key={group._id} xs={12} sm={6} md={4} lg={3}>
+                <StudyGroupCard
+                  groupId={group._id}
+                  title={group.title}
+                  subject={group.subject}
+                  description={group.description}
+                />
+              </Grid>
+            ))
+          )}
+        </Grid>
       </Box>
 
-      {/* Group Cards */}
-      <Grid container spacing={10} justifyContent="center">
-        {groups.length === 0 ? (
-          <Typography variant="h6" color="gray">No groups found.</Typography>
-        ) : (
-          groups.map(group => (
-            <Grid item key={group._id} xs={12} sm={6} md={4} lg={3}>
-              <StudyGroupCard
-                groupId={group._id}
-                title={group.title}
-                subject={group.subject}
-                description={group.description}
-              />
-            </Grid>
-          ))
-        )}
-      </Grid>
-
       {/* Create Group Modal */}
-      <Modal open={open} onClose={() => setOpen(false)}>
+      <Modal open={openCreateModal} onClose={() => setOpenCreateModal(false)}>
         <Box
           sx={{
-            position: 'absolute', top: '50%', left: '50%',
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: 400, bgcolor: 'white', color: 'black', p: 4, borderRadius: 2
+            width: 400,
+            bgcolor: 'white',
+            color: 'black',
+            p: 4,
+            borderRadius: 2,
           }}
         >
-          <Typography variant="h6" mb={2}>Create a New Group</Typography>
+          <Typography variant="h6" mb={2}>
+            Create a New Group
+          </Typography>
           <form onSubmit={handleCreateGroup}>
             <TextField
               label="Group Name"
@@ -123,7 +209,12 @@ const Home = () => {
               onChange={(e) => setMembers(e.target.value)}
               margin="normal"
             />
-            <Button type="submit" variant="contained" color="secondary" sx={{ mt: 2 }}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="secondary"
+              sx={{ mt: 2 }}
+            >
               Create Group
             </Button>
           </form>
