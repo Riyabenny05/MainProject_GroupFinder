@@ -13,6 +13,7 @@ import AdminRoute from './routes/AdminRoute';
 import UserRoute from './routes/UserRoute';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
+import Box from '@mui/material/Box';
 
 // 🔴 Make sure these are created and exported properly
 import UserManage from './pages/UserManage'; 
@@ -22,6 +23,7 @@ function App() {
   return (
     <AuthProvider>
       <Navbar />
+      <Box sx={{ pt: '64px' }}>
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Splash />} />
@@ -62,6 +64,7 @@ function App() {
         />
         */}
       </Routes>
+      </Box>
     </AuthProvider>
   );
 }

@@ -19,8 +19,19 @@ const CustomNavbar = () => {
     : '/';
 
   return (
-    <AppBar position="static" color="secondary" sx={{ width: '100%' }}>
-      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', px: 4 }}>
+    <AppBar
+  position="fixed"
+  color="secondary"
+  sx={{
+    left: 0,
+    right: 0,
+    top: 0,
+    width: '100%',
+    zIndex: (theme) => theme.zIndex.drawer + 1,
+  }}
+>
+
+   <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', px: { xs: 2, md: 4 } }}>
         <Typography
           variant="h5"
           sx={{ color: 'white', cursor: 'pointer' }}
