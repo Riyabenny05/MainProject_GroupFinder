@@ -6,8 +6,8 @@ const CustomNavbar = () => {
   return (
     <AppBar position="static" color="secondary" sx={{ width: '100vw' }}>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', px: 4 }}>
-        <Typography variant="h6" sx={{ color: 'white' }}>
-          Study Groups
+        <Typography variant="h5" sx={{ color: 'white' }} fontFamily={'italic'}>
+         MinGlo
         </Typography>
         <Box>
           <Button color="inherit" component={Link} to="/">Home</Button>
