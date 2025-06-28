@@ -4,7 +4,10 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+
+  // Example: login({ name: 'Alice', email: 'alice@example.com', role: 'admin' })
   const login = (userData) => setUser(userData);
+
   const logout = () => setUser(null);
 
   return (
