@@ -18,7 +18,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import StudyGroupCard from "../components/GroupCard";
 import { useNavigate } from "react-router-dom";
-
+import { useAuth } from '../context/AuthContext';
 const Home = () => {
   const navigate = useNavigate();
   const [groups, setGroups] = useState([]);
@@ -27,7 +27,8 @@ const Home = () => {
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [groupName, setGroupName] = useState("");
   const [members, setMembers] = useState("");
-
+  const { user, logout } = useAuth();
+  
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -37,8 +38,8 @@ const Home = () => {
   };
 
   const handleLogout = () => {
-    localStorage.clear();
-    navigate("/login");
+    logout();
+    navigate('/login');
   };
 
   const handleCreateGroup = (e) => {

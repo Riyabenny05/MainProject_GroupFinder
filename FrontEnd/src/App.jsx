@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
+import Splash from './pages/Splash'; 
 import Home from "./pages/Home";
 import GroupCard from "./components/GroupCard";
 import GroupDetails from "./pages/GroupDetails";
@@ -23,7 +24,8 @@ function App() {
       <Navbar />
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Splash />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/groupcard" element={<GroupCard />} />
