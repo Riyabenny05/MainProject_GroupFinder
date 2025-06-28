@@ -19,7 +19,7 @@ const CustomNavbar = () => {
     : '/';
 
   return (
-    <AppBar position="static" color="secondary" sx={{ width: '100vw' }}>
+    <AppBar position="static" color="secondary" sx={{ width: '100%' }}>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', px: 4 }}>
         <Typography
           variant="h5"
