@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -10,23 +10,24 @@ import {
   Button,
   Box,
   Grid,
-  Modal
-} from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import NotificationsOffIcon from '@mui/icons-material/NotificationsOff';
-import LogoutIcon from '@mui/icons-material/Logout';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import StudyGroupCard from '../components/GroupCard';
-import { useNavigate } from 'react-router-dom';
+  Modal,
+} from "@mui/material";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import NotificationsOffIcon from "@mui/icons-material/NotificationsOff";
+import LogoutIcon from "@mui/icons-material/Logout";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import { useNavigate } from "react-router-dom";
+import StudyGroupCard from "../components/GroupCard";
+import AnimatedGrid from "../components/AnimatedGrid"; // <-- Make sure this file exists
 
 const Home = () => {
   const navigate = useNavigate();
   const [groups, setGroups] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [anchorEl, setAnchorEl] = useState(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);
-  const [groupName, setGroupName] = useState('');
-  const [members, setMembers] = useState('');
+  const [groupName, setGroupName] = useState("");
+  const [members, setMembers] = useState("");
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -38,7 +39,7 @@ const Home = () => {
 
   const handleLogout = () => {
     localStorage.clear();
-    navigate('/login');
+    navigate("/login");
   };
 
   const handleCreateGroup = (e) => {
@@ -46,12 +47,12 @@ const Home = () => {
     const newGroup = {
       _id: Date.now().toString(),
       title: groupName,
-      subject: 'Custom Group',
+      subject: "Custom Group",
       description: `Members: ${members}`,
     };
     setGroups([...groups, newGroup]);
-    setGroupName('');
-    setMembers('');
+    setGroupName("");
+    setMembers("");
     setOpenCreateModal(false);
     handleMenuClose();
   };
@@ -59,22 +60,22 @@ const Home = () => {
   useEffect(() => {
     setGroups([
       {
-        _id: '1',
-        title: 'React Learners',
-        subject: 'Frontend Development',
-        description: 'Learn React, hooks, and component design.',
+        _id: "1",
+        title: "React Learners",
+        subject: "Frontend Development",
+        description: "Learn React, hooks, and component design.",
       },
       {
-        _id: '2',
-        title: 'Python Devs',
-        subject: 'Python Programming',
-        description: 'Explore Python basics, OOP, and projects.',
+        _id: "2",
+        title: "Python Devs",
+        subject: "Python Programming",
+        description: "Explore Python basics, OOP, and projects.",
       },
       {
-        _id: '3',
-        title: 'Cyber Ninjas',
-        subject: 'Cybersecurity',
-        description: 'Learn ethical hacking and CTF challenges.',
+        _id: "3",
+        title: "Cyber Ninjas",
+        subject: "Cybersecurity",
+        description: "Learn ethical hacking and CTF challenges.",
       },
     ]);
   }, []);
@@ -84,11 +85,20 @@ const Home = () => {
   );
 
   return (
-    <Box sx={{ backgroundColor: 'black', color: 'white', minHeight: '100vh' }}>
+    <Box
+      sx={{
+        background: "linear-gradient(to bottom right,rgb(30, 14, 27),rgb(123, 38, 153))",
+        color: "white",
+        minHeight: "100vh",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      <AnimatedGrid /> {/* Glowing animated background */}
+
       {/* Navbar */}
-      <AppBar position="static" sx={{ backgroundColor: 'black' }}>
+      <AppBar position="static" sx={{ backgroundColor: "black", zIndex: 1 }}>
         <Toolbar>
-          
           <TextField
             size="small"
             placeholder="Search groups"
@@ -96,28 +106,24 @@ const Home = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             sx={{
-              backgroundColor: 'white',
+              backgroundColor: "white",
               borderRadius: 5,
               mr: 4,
-              minWidth: '250px',
+              minWidth: "250px",
             }}
           />
           <IconButton
             color="inherit"
             onClick={handleMenuClick}
-            sx={{ color: 'white' }}
+            sx={{ color: "white" }}
           >
             <MoreVertIcon />
           </IconButton>
         </Toolbar>
       </AppBar>
 
-      {/* Menu in Navbar */}
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
-      >
+      {/* Menu */}
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
         <MenuItem onClick={() => setOpenCreateModal(true)}>
           <AddCircleOutlineIcon sx={{ mr: 1 }} /> Create Group
         </MenuItem>
@@ -129,20 +135,20 @@ const Home = () => {
         </MenuItem>
       </Menu>
 
-      {/* Page Content */}
-      <Box sx={{ px: 4, py: 8 }}>
+      {/* Content */}
+      <Box sx={{ px: 4, py: 8, position: "relative", zIndex: 1 }}>
         <Typography variant="h2" align="center" gutterBottom>
           🔍 Explore Study Groups
         </Typography>
         <Typography
           variant="subtitle1"
           align="center"
-          sx={{ color: '#DDA0DD', mb: 6 }}
+          sx={{ color: "#DDA0DD", mb: 6 }}
         >
           Connect, Learn, and Grow with peers sharing the same interests.
         </Typography>
 
-        {/* Create Group Button in Middle of Page */}
+        {/* Create Group Button */}
         <Box display="flex" justifyContent="center" mb={6}>
           <Button
             variant="contained"
@@ -179,13 +185,13 @@ const Home = () => {
       <Modal open={openCreateModal} onClose={() => setOpenCreateModal(false)}>
         <Box
           sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
             width: 400,
-            bgcolor: 'white',
-            color: 'black',
+            bgcolor: "white",
+            color: "black",
             p: 4,
             borderRadius: 2,
           }}
@@ -209,12 +215,7 @@ const Home = () => {
               onChange={(e) => setMembers(e.target.value)}
               margin="normal"
             />
-            <Button
-              type="submit"
-              variant="contained"
-              color="secondary"
-              sx={{ mt: 2 }}
-            >
+            <Button type="submit" variant="contained" color="secondary" sx={{ mt: 2 }}>
               Create Group
             </Button>
           </form>
