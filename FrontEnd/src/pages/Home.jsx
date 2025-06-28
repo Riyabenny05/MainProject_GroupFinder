@@ -8,9 +8,7 @@ import {
   MenuItem,
   TextField,
   Button,
-  Box,
-  Grid,
-  Modal,
+  Box,Grid, Modal,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import NotificationsOffIcon from "@mui/icons-material/NotificationsOff";
@@ -57,7 +55,7 @@ const Home = () => {
     handleMenuClose();
   };
 
-  useEffect(() => {
+  useEffect(() => {  //used to load initial group data
     setGroups([
       {
         _id: "1",
@@ -86,7 +84,7 @@ const Home = () => {
 
   return (
     <>
-      {/* ✅ Floating animated grid background */}
+      
       <Box
         sx={{
           position: "fixed",
@@ -95,7 +93,7 @@ const Home = () => {
           top: 0,
           left: 0,
           zIndex: -1,
-          background: "linear-gradient(to bottom right, #2a003f, #1a1a2e)",
+          background: "linear-gradient(to bottom right,rgb(15, 3, 21), #1a1a2e)",
           "&::before": {
             content: '""',
             position: "absolute",
@@ -128,11 +126,9 @@ const Home = () => {
       {/* Main content */}
       <Box sx={{ color: "white", minHeight: "100vh", position: "relative", zIndex: 1 }}>
         {/* Navbar */}
-        <AppBar position="static" sx={{ backgroundColor: "black", zIndex: 2 }}>
+        <AppBar position="static" sx={{ backgroundColor: "#1a1a2e", zIndex: 2 }}>
           <Toolbar>
-            <Typography variant="h6" sx={{ flexGrow: 1 }}>
-              MinGlo
-            </Typography>
+            
             <TextField
               size="small"
               placeholder="Search groups"
@@ -171,11 +167,11 @@ const Home = () => {
 
         {/* Page Content */}
         <Box sx={{ px: 4, py: 8 }}>
-          <Typography variant="h2" align="center" gutterBottom>
-            🔍 Explore Study Groups
+          <Typography variant="h2" align="center" gutterBottom fontStyle={"Poppins"}>
+            🎯 Unite to Learn
           </Typography>
-          <Typography variant="subtitle1" align="center" sx={{ color: "#DDA0DD", mb: 6 }}>
-            Connect, Learn, and Grow with peers sharing the same interests.
+          <Typography variant="h5" align="center" sx={{ color: "#DDA0DD", mb: 6 }}>
+       Team up! Learn fast! Reach farther!...👥
           </Typography>
 
           {/* Create Group Button in Middle of Page */}
