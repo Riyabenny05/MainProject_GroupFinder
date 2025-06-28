@@ -13,11 +13,14 @@ import {
   Paper,
   Link as MuiLink,
 } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext'; // ✅ Make sure this import is correct
 
 const Login = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { login } = useAuth(); // ✅ hook from context
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -25,8 +28,22 @@ const Login = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    alert(`Login clicked for ${role} - Email: ${email}`);
-    // Place axios login logic here
+
+    // 👉 Normally you'd fetch this from a server using axios
+    const userData = {
+      email,
+      role,
+      name: role === 'admin' ? 'Admin User' : 'Regular User',
+    };
+
+    login(userData);
+
+    // ✅ Redirect based on role
+    if (role === 'admin') {
+      navigate('/admin-dashboard');
+    } else {
+      navigate('/');
+    }
   };
 
   return (
@@ -58,8 +75,6 @@ const Login = () => {
             fullWidth
             margin="normal"
             type="email"
-            name="email"
-            autoComplete="off"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -70,8 +85,6 @@ const Login = () => {
             fullWidth
             margin="normal"
             type="password"
-            name="password"
-            autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -100,7 +113,6 @@ const Login = () => {
           </Button>
         </form>
 
-        {/* Link to Sign Up */}
         <Typography variant="body2" textAlign="center" sx={{ mt: 2 }}>
           Don't have an account?{' '}
           <MuiLink component={RouterLink} to="/signup" underline="hover">
