@@ -1,37 +1,22 @@
-// App.jsx
+import React from "react";
+import { Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
-import GroupCard from "./components/GroupCard";
 import Home from "./pages/Home";
-import Animations from "./components/AnimatedGrid";
+import GroupCard from "./components/GroupCard";
 import GroupDetails from "./pages/GroupDetails";
 import AdminDashboard from "./pages/AdminDashboard";
-import { Routes, Route } from "react-router-dom";
-import "./App.css";
-
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Login from './pages/Login';
-import SignUp from './pages/SignUp';
-import Home from './pages/Home';
-import GroupCard from './components/GroupCard';
-import GroupDetails from './pages/GroupDetails';
-import AdminDashboard from './pages/AdminDashboard';
-import UserManage from './pages/UserManage';
-import Unauthorized from './pages/Unauthorized';
-
 import AdminRoute from './routes/AdminRoute';
 import UserRoute from './routes/UserRoute';
-import ProtectedRoute from './components/ProtectedRoute'; // still useful for shared protection
+import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 
-import './App.css';
+// 🔴 Make sure these are created and exported properly
+import UserManage from './pages/UserManage'; 
+import Unauthorized from './pages/Unauthorized';
 
-
-/*******  b8e7723b-6042-46bd-9908-ad8bf812a1c0  *******/
 function App() {
   return (
     <AuthProvider>
@@ -43,12 +28,9 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/groupcard" element={<GroupCard />} />
         <Route path="/group/:id" element={<GroupDetails />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
 
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
-        <Route path="/animations" element={<Animations />} />
-
-
-        {/* Protected Admin Routes */}
+        {/* Admin Protected Routes */}
         <Route
           path="/admin-dashboard"
           element={
@@ -66,7 +48,7 @@ function App() {
           }
         />
 
-        {/* Optional Protected User Routes (wrap if needed) */}
+        {/* Optional User Protected Routes (Uncomment if needed) */}
         {/* 
         <Route
           path="/user-dashboard"
@@ -77,10 +59,6 @@ function App() {
           }
         />
         */}
-
-        {/* Unauthorized Fallback */}
-        <Route path="/unauthorized" element={<Unauthorized />} />
-
       </Routes>
     </AuthProvider>
   );
