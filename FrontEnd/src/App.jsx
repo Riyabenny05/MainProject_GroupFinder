@@ -52,17 +52,6 @@ function App() {
           }
         />
 
-        {/* Optional User Protected Routes (Uncomment if needed) */}
-        {/* 
-        <Route
-          path="/user-dashboard"
-          element={
-            <UserRoute>
-              <UserDashboard />
-            </UserRoute>
-          }
-        />
-        */}
       </Routes>
       </Box>
     </AuthProvider>
