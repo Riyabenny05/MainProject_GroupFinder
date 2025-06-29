@@ -43,13 +43,11 @@ const Login = () => {
         return;
       }
 
-      // Save to localStorage
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
 
-      login(user, token); // Update context
+      login(user, token);
 
-      // Navigate
       if (user.role === 'admin') {
         navigate('/admin-dashboard');
       } else {
