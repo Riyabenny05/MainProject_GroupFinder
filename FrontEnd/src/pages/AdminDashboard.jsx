@@ -30,7 +30,7 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+useEffect(() => {
     const fetchAdminData = async () => {
       setLoading(true);
       setError(null);
@@ -62,7 +62,7 @@ const AdminDashboard = () => {
     };
 
     fetchAdminData();
-  }, []);
+  }, []);  
 
   const handleApprove = (id) => {
     setGroups(prev => prev.map(g => (g.id === id ? { ...g, status: 'Approved' } : g)));
@@ -109,7 +109,7 @@ const AdminDashboard = () => {
     top: 0,
     left: 0,
     background: 'linear-gradient(to bottom right, #2a003f, #1a1a2e)',
-    color: 'white',
+    color: 'transparent',
     padding: '80px 24px 24px', // Top padding for AppBar + page padding
     boxSizing: 'border-box',
     overflowX: 'hidden',
@@ -287,6 +287,7 @@ const AdminDashboard = () => {
 </Card>
 
     </Box>
+    
   );
 };
 

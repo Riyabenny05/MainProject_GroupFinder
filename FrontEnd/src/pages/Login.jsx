@@ -27,24 +27,27 @@ const Login = () => {
   const [role, setRole] = useState('user');
 
   const handleLogin = (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    // 👉 Normally you'd fetch this from a server using axios
-    const userData = {
-      email,
-      role,
-      name: role === 'admin' ? 'Admin User' : 'Regular User',
-    };
+  // 🧠 Determine role based on email
+  const role = email === 'admin@example.com' ? 'admin' : 'user';
 
-    login(userData);
-
-    // ✅ Redirect based on role
-    if (role === 'admin') {
-      navigate('/admin-dashboard');
-    } else {
-      navigate('/home');
-    }
+  const userData = {
+    email,
+    role,
+    name: role === 'admin' ? 'Admin User' : 'Regular User',
   };
+
+  login(userData);
+
+  // 🔁 Redirect
+  if (role === 'admin') {
+    navigate('/admin-dashboard');
+  } else {
+    navigate('/home');
+  }
+};
+
 
   return (
     <Box
@@ -89,19 +92,6 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-
-          <FormControl fullWidth margin="normal">
-            <InputLabel>Role</InputLabel>
-            <Select
-              value={role}
-              label="Role"
-              onChange={(e) => setRole(e.target.value)}
-            >
-              <MenuItem value="user">User</MenuItem>
-              <MenuItem value="admin">Admin</MenuItem>
-            </Select>
-          </FormControl>
-
           <Button
             fullWidth
             type="submit"

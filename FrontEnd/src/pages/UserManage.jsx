@@ -32,38 +32,69 @@ const UserManage = () => {
   }
 
   return (
-    <Box sx={{ p: 4 }}>
+    <Box sx={{ p: 4, bgcolor: '#1a1a2e', minHeight: '100vh', color: 'white' }}>
       <Typography variant="h5" gutterBottom>
         📧 Manage Notifications for {user.name}
       </Typography>
-      <Typography variant="body1" color="text.secondary" gutterBottom>
-        Email: {user.email}
+      <Typography variant="body1" sx={{ color: '#ccc' }} gutterBottom>
+         Email: {user.email}
       </Typography>
-
       <TextField
-        fullWidth
-        multiline
-        rows={4}
-        label="Notification Message"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        sx={{ mt: 2 }}
-      />
+  fullWidth
+  multiline
+  rows={4}
+  label="Notification Message"
+  value={message}
+  onChange={(e) => setMessage(e.target.value)}
+  sx={{
+    mt: 2,
+    input: { color: 'white' },
+    textarea: { color: 'white' },
+    '& .MuiInputBase-root': {
+      backgroundColor: '#2e2e48',
+    },
+    '& .MuiInputLabel-root': {
+      color: '#aaa',
+    },
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#444',
+    },
+    '&:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#666',
+    },
+    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#888',
+    },
+  }}
+/>
 
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleSendNotification}
-        sx={{ mt: 2 }}
-      >
-        Send Notification
-      </Button>
-
+    <Button
+  variant="contained"
+  onClick={handleSendNotification}
+  sx={{
+    mt: 2,
+    backgroundColor: '#5271ff',
+    color: '#fff',
+    '&:hover': {
+      backgroundColor: '#4156cc',
+    },
+  }}
+>
+  Send Notification
+</Button>
       {success && (
-        <Alert severity="success" sx={{ mt: 2 }}>
-          Notification sent successfully!
-        </Alert>
-      )}
+  <Alert
+    severity="success"
+    sx={{
+      mt: 2,
+      bgcolor: '#2e4d2e',
+      color: '#d2ffd2',
+      border: '1px solid #4caf50',
+    }}
+  >
+    Notification sent successfully!
+  </Alert>
+)}
     </Box>
   );
 };
