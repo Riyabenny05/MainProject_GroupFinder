@@ -65,9 +65,7 @@ const AdminDashboard = () => {
   }, []);
 
   const handleApprove = (id) => {
-    setGroups(prev =>
-      prev.map(g => (g.id === id ? { ...g, status: 'Approved' } : g))
-    );
+    setGroups(prev => prev.map(g => (g.id === id ? { ...g, status: 'Approved' } : g)));
   };
 
   const handleDelete = (id) => {
@@ -84,7 +82,7 @@ const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <Box sx={{ p: isMobile ? 2 : 4, textAlign: 'center' }}>
+      <Box sx={{ p: isMobile ? 2 : 4, textAlign: 'center', color: 'white' }}>
         <CircularProgress sx={{ mb: 2 }} />
         <Typography variant="h6">Loading Admin Data...</Typography>
       </Box>
@@ -93,7 +91,7 @@ const AdminDashboard = () => {
 
   if (error) {
     return (
-      <Box sx={{ p: isMobile ? 2 : 4, textAlign: 'center' }}>
+      <Box sx={{ p: isMobile ? 2 : 4, textAlign: 'center', color: 'white' }}>
         <Alert severity="error">{error}</Alert>
         <Button variant="contained" onClick={() => window.location.reload()} sx={{ mt: 2 }}>
           Retry
@@ -103,153 +101,191 @@ const AdminDashboard = () => {
   }
 
   return (
-    <Box sx={{ p: isMobile ? 2 : 4 }}>
+    <Box
+  sx={{
+    minHeight: '100vh',
+    width: '100vw',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    background: 'linear-gradient(to bottom right, #2a003f, #1a1a2e)',
+    color: 'white',
+    padding: '80px 24px 24px', // Top padding for AppBar + page padding
+    boxSizing: 'border-box',
+    overflowX: 'hidden',
+  }}
+>
+
+
       <Typography variant="h4" gutterBottom>
         🛠 Admin Dashboard
       </Typography>
 
-      <Grid container spacing={2} columns={12} sx={{ mb: 4 }}>
-        <Grid span={12} sm={6} md={4}>
-          <Card elevation={3}>
-            <CardContent>
-              <Typography variant="h6" color="primary">Total Groups</Typography>
-              <Typography variant="h4">{groups.length}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid span={12} sm={6} md={4}>
-          <Card elevation={3}>
-            <CardContent>
-              <Typography variant="h6" color="success.main">Approved Groups</Typography>
-              <Typography variant="h4">
-                {groups.filter(g => g.status === 'Approved').length}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid span={12} sm={6} md={4}>
-          <Card elevation={3}>
-            <CardContent>
-              <Typography variant="h6" color="warning.main">Pending Groups</Typography>
-              <Typography variant="h4">
-                {groups.filter(g => g.status === 'Pending').length}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid span={12} sm={6} md={4}>
-          <Card elevation={3}>
-            <CardContent>
-              <Typography variant="h6" color="info.main">Registered Users</Typography>
-              <Typography variant="h4">{users.length}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-
-      <Card sx={{ mb: 4 }} elevation={3}>
+      {/* Summary Cards */}
+      <Grid
+  container
+  spacing={2}
+  justifyContent="space-between"
+  alignItems="stretch"
+  sx={{ mb: 4 }}
+>
+  {[
+    { label: 'Total Groups', value: groups.length, icon: '👥' },
+    { label: 'Approved Groups', value: groups.filter(g => g.status === 'Approved').length, icon: '✅' },
+    { label: 'Pending Groups', value: groups.filter(g => g.status === 'Pending').length, icon: '⏳' },
+    { label: 'Registered Users', value: users.length, icon: '📋' }
+  ].map((item, index) => (
+    <Grid item xs={12} sm={6} md={3} key={index}>
+      <Card
+        elevation={4}
+        sx={{
+          height: '100%',
+          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+          color: 'white',
+        }}
+      >
         <CardContent>
-          <Typography variant="h6" gutterBottom>
-            Study Group Management
+          <Typography
+            variant="subtitle2"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              fontSize: '0.9rem',
+              fontWeight: 500,
+            }}
+          >
+            {item.icon} {item.label}
           </Typography>
-
-          <TableContainer component={Paper}>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Group Name</TableCell>
-                  <TableCell>Members</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell align="center">Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {groups.map(group => (
-                  <TableRow key={group.id}>
-                    <TableCell>{group.name}</TableCell>
-                    <TableCell>{group.members}</TableCell>
-                    <TableCell>{group.status}</TableCell>
-                    <TableCell align="center">
-                      <Grid container spacing={1} justifyContent="center">
-                        <Grid span={4}>
-                          <Button
-                            size="small"
-                            variant="contained"
-                            color="info"
-                            onClick={() => handleViewGroup(group.id)}
-                          >
-                            View
-                          </Button>
-                        </Grid>
-                        <Grid span={4}>
-                          <Button
-                            size="small"
-                            variant="contained"
-                            color="success"
-                            onClick={() => handleApprove(group.id)}
-                            disabled={group.status === 'Approved'}
-                          >
-                            Approve
-                          </Button>
-                        </Grid>
-                        <Grid span={4}>
-                          <Button
-                            size="small"
-                            variant="outlined"
-                            color="error"
-                            onClick={() => handleDelete(group.id)}
-                          >
-                            Delete
-                          </Button>
-                        </Grid>
-                      </Grid>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <Typography variant="h4">{item.value}</Typography>
         </CardContent>
       </Card>
+    </Grid>
+  ))}
+</Grid>
 
-      <Card elevation={3}>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
-            Registered Users
-          </Typography>
-          <TableContainer component={Paper}>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Registered At</TableCell>
-                  <TableCell align="center">Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {users.map(user => (
-                  <TableRow key={user.id}>
-                    <TableCell>{user.name}</TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>{user.registeredAt}</TableCell>
-                    <TableCell align="center">
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        color="primary"
-                        onClick={() => handleManageUser(user.id)}
-                      >
-                        Manage
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </CardContent>
-      </Card>
+
+      {/* Groups Table */}
+      <Card
+  elevation={4}
+  sx={{
+    mb: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    color: 'white',
+  }}
+>
+  <CardContent>
+    <Typography variant="h6" gutterBottom>
+      📘 Study Group Management
+    </Typography>
+
+    <TableContainer component={Paper} sx={{ backgroundColor: 'transparent' }}>
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell sx={{ color: 'white' }}>Group Name</TableCell>
+            <TableCell sx={{ color: 'white' }}>Members</TableCell>
+            <TableCell sx={{ color: 'white' }}>Status</TableCell>
+            <TableCell align="center" sx={{ color: 'white' }}>Actions</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {groups.map(group => (
+            <TableRow key={group.id}>
+              <TableCell sx={{ color: 'white' }}>{group.name}</TableCell>
+              <TableCell sx={{ color: 'white' }}>{group.members}</TableCell>
+              <TableCell sx={{ color: 'white' }}>{group.status}</TableCell>
+              <TableCell align="center">
+                <Grid container spacing={1} justifyContent="center">
+                  <Grid item>
+                    <Button
+                      size="small"
+                      variant="contained"
+                      sx={{ backgroundColor: '#1E3A8A', color: 'white' }}
+                      onClick={() => handleViewGroup(group.id)}
+                    >
+                      View
+                    </Button>
+                  </Grid>
+                  <Grid item>
+                    <Button
+                      size="small"
+                      variant="contained"
+                      sx={{ backgroundColor: '#14532D', color: 'white' }}
+                      onClick={() => handleApprove(group.id)}
+                      disabled={group.status === 'Approved'}
+                    >
+                      Approve
+                    </Button>
+                  </Grid>
+                  <Grid item>
+                    <Button
+                      size="small"
+                      variant="contained"
+                      sx={{ backgroundColor: '#7F1D1D', color: 'white' }}
+                      onClick={() => handleDelete(group.id)}
+                    >
+                      Delete
+                    </Button>
+                  </Grid>
+                </Grid>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  </CardContent>
+</Card>
+
+
+      {/* Users Table */}
+      <Card
+  elevation={4}
+  sx={{
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    color: 'white',
+  }}
+>
+  <CardContent>
+    <Typography variant="h6" gutterBottom>
+      👥 Registered Users
+    </Typography>
+
+    <TableContainer component={Paper} sx={{ backgroundColor: 'transparent' }}>
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell sx={{ color: 'white' }}>Name</TableCell>
+            <TableCell sx={{ color: 'white' }}>Email</TableCell>
+            <TableCell sx={{ color: 'white' }}>Registered At</TableCell>
+            <TableCell align="center" sx={{ color: 'white' }}>Actions</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {users.map(user => (
+            <TableRow key={user.id}>
+              <TableCell sx={{ color: 'white' }}>{user.name}</TableCell>
+              <TableCell sx={{ color: 'white' }}>{user.email}</TableCell>
+              <TableCell sx={{ color: 'white' }}>{user.registeredAt}</TableCell>
+              <TableCell align="center">
+                <Button
+                  size="small"
+                  variant="contained"
+                  sx={{ backgroundColor: '#7C5B82', color: 'white' }}
+                  onClick={() => handleManageUser(user.id)}
+                >
+                  Manage
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  </CardContent>
+</Card>
+
     </Box>
   );
 };
