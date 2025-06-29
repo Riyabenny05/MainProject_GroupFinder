@@ -8,11 +8,17 @@ import {
   Box,
   Paper,
   Link as MuiLink,
+  Alert,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import axios from '../utils/axios'; // ✅ Correctly configured axios instance
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [form, setForm] = useState({
     name: '',
@@ -22,6 +28,9 @@ const SignUp = () => {
     agree: false,
   });
 
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({
@@ -30,14 +39,24 @@ const SignUp = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setSuccess('');
 
-    // You can show a success message using alert or toast here
-    alert('Sign Up successful! Redirecting to Login...');
+    try {
+      const { name, email, contact, password } = form;
 
-    // Redirect to login page
-    navigate('/login');
+      // ✅ POST to full backend URL via axios instance
+      await axios.post('/auth/register', { name, email, contact, password });
+
+      setSuccess('✅ Sign up successful! Redirecting to login...');
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
+    } catch (err) {
+      setError(err.response?.data?.error || '❌ Something went wrong!');
+    }
   };
 
   const isFormValid =
@@ -55,13 +74,31 @@ const SignUp = () => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        p: 2,
+        padding: 2,
       }}
     >
-      <Paper elevation={4} sx={{ width: 400, p: 4, borderRadius: 3 }}>
+      <Paper
+        elevation={4}
+        sx={{
+          width: isMobile ? '100%' : 400,
+          padding: isMobile ? 2 : 4,
+          borderRadius: 3,
+        }}
+      >
         <Typography variant="h5" textAlign="center" gutterBottom>
           Sign Up
         </Typography>
+
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+        {success && (
+          <Alert severity="success" sx={{ mb: 2 }}>
+            {success}
+          </Alert>
+        )}
 
         <form onSubmit={handleSubmit}>
           <TextField
@@ -78,9 +115,9 @@ const SignUp = () => {
             margin="normal"
             name="email"
             label="Email"
+            type="email"
             value={form.email}
             onChange={handleChange}
-            type="email"
             required
           />
           <TextField
@@ -97,9 +134,9 @@ const SignUp = () => {
             margin="normal"
             name="password"
             label="Password"
+            type="password"
             value={form.password}
             onChange={handleChange}
-            type="password"
             required
           />
           <FormControlLabel

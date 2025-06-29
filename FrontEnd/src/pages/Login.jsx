@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from '../utils/axios';
 import {
   Box,
   TextField,
@@ -12,37 +13,50 @@ import {
   useTheme,
   Paper,
   Link as MuiLink,
+  Alert,
 } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // ✅ Make sure this import is correct
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { login } = useAuth(); // ✅ hook from context
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('user');
+  const [error, setError] = useState('');
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    setError('');
 
-    // 👉 Normally you'd fetch this from a server using axios
-    const userData = {
-      email,
-      role,
-      name: role === 'admin' ? 'Admin User' : 'Regular User',
-    };
+    try {
+      const res = await axios.post('/auth/login', { email, password });
 
-    login(userData);
+      const { token, user } = res.data;
 
-    // ✅ Redirect based on role
-    if (role === 'admin') {
-      navigate('/admin-dashboard');
-    } else {
-      navigate('/home');
+      if (user.role !== role) {
+        setError(`You are not authorized as a "${role}"`);
+        return;
+      }
+
+      // Save to localStorage
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      login(user, token); // Update context
+
+      // Navigate
+      if (user.role === 'admin') {
+        navigate('/admin-dashboard');
+      } else {
+        navigate('/home');
+      }
+    } catch (err) {
+      setError(err.response?.data?.error || 'Login failed. Please try again.');
     }
   };
 
@@ -68,6 +82,12 @@ const Login = () => {
         <Typography variant="h5" textAlign="center" mb={3}>
           Login
         </Typography>
+
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
 
         <form onSubmit={handleLogin} autoComplete="off">
           <TextField
@@ -96,6 +116,7 @@ const Login = () => {
               value={role}
               label="Role"
               onChange={(e) => setRole(e.target.value)}
+              required
             >
               <MenuItem value="user">User</MenuItem>
               <MenuItem value="admin">Admin</MenuItem>
