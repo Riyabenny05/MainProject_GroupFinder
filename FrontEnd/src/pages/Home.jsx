@@ -8,7 +8,9 @@ import {
   MenuItem,
   TextField,
   Button,
-  Box,Grid, Modal,
+  Box,
+  Grid,
+  Modal,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import NotificationsOffIcon from "@mui/icons-material/NotificationsOff";
@@ -16,7 +18,9 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import StudyGroupCard from "../components/GroupCard";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from "../context/AuthContext";
+import splashVideo from "../assets/Animated_grid.mp4"; // ✅_viedo.mp4"; // ✅ video import
+
 const Home = () => {
   const navigate = useNavigate();
   const [groups, setGroups] = useState([]);
@@ -25,8 +29,8 @@ const Home = () => {
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [groupName, setGroupName] = useState("");
   const [members, setMembers] = useState("");
-  const { user, logout } = useAuth();
-  
+  const { logout } = useAuth();
+
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -37,7 +41,7 @@ const Home = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   const handleCreateGroup = (e) => {
@@ -55,7 +59,7 @@ const Home = () => {
     handleMenuClose();
   };
 
-  useEffect(() => {  //used to load initial group data
+  useEffect(() => {
     setGroups([
       {
         _id: "1",
@@ -84,51 +88,69 @@ const Home = () => {
 
   return (
     <>
-      
+      {/* Global style to remove body scroll and padding */}
+      <style>{`
+        html, body {
+          margin: 0;
+          padding: 0;
+          overflow: hidden;
+        }
+      `}</style>
+
+      {/* Background Video */}
       <Box
         sx={{
           position: "fixed",
-          width: "100vw",
-          height: "100vh",
           top: 0,
           left: 0,
-          zIndex: -1,
-          background: "linear-gradient(to bottom right,rgb(15, 3, 21), #1a1a2e)",
-          "&::before": {
-            content: '""',
-            position: "absolute",
-            width: "300%",
-            height: "300%",
-            backgroundImage:
-              "radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
-            animation: "gridMove 60s linear infinite",
-            pointerEvents: "none",
-            top: "-100%",
-            left: "-100%",
-          },
+          width: "100vw",
+          height: "100vh",
+          zIndex: -2,
+          overflow: "hidden",
         }}
-      />
+      >
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          style={{
+            width: "100vw",
+            height: "100vh",
+            objectFit: "cover",
+          }}
+        >
+          <source src={splashVideo} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        {/* Optional dark overlay */}
+        <Box
+          sx={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            top: 0,
+            left: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 1,
+          }}
+        />
+      </Box>
 
-      <style>
-        {`
-          @keyframes gridMove {
-            0% {
-              transform: translate(0, 0);
-            }
-            100% {
-              transform: translate(100px, 100px);
-            }
-          }
-        `}
-      </style>
-
-      {/* Main content */}
-      <Box sx={{ color: "white", minHeight: "100vh", position: "relative", zIndex: 1 }}>
+      {/* Foreground Content */}
+      <Box
+        sx={{
+          color: "white",
+          minHeight: "100vh",
+          width: "100vw",
+          position: "relative",
+          zIndex: 2,
+          overflowY: "auto",
+        }}
+      >
         {/* Navbar */}
-        <AppBar position="static" sx={{ backgroundColor: "#1a1a2e", zIndex: 2 }}>
+        <AppBar position="static" sx={{ backgroundColor: "#1a1a2e", zIndex: 3 }}>
           <Toolbar>
-            
             <TextField
               size="small"
               placeholder="Search groups"
@@ -142,11 +164,7 @@ const Home = () => {
                 minWidth: "250px",
               }}
             />
-            <IconButton
-              color="inherit"
-              onClick={handleMenuClick}
-              sx={{ color: "white" }}
-            >
+            <IconButton color="inherit" onClick={handleMenuClick} sx={{ color: "white" }}>
               <MoreVertIcon />
             </IconButton>
           </Toolbar>
@@ -167,14 +185,14 @@ const Home = () => {
 
         {/* Page Content */}
         <Box sx={{ px: 4, py: 8 }}>
-          <Typography variant="h2" align="center" gutterBottom fontStyle={"Poppins"}>
+          <Typography variant="h2" align="center" gutterBottom>
             🎯 Unite to Learn
           </Typography>
           <Typography variant="h5" align="center" sx={{ color: "#DDA0DD", mb: 6 }}>
-       Team up! Learn fast! Reach farther!...👥
+            Team up! Learn fast! Reach farther!...👥
           </Typography>
 
-          {/* Create Group Button in Middle of Page */}
+          {/* Create Group Button */}
           <Box display="flex" justifyContent="center" mb={6}>
             <Button
               variant="contained"

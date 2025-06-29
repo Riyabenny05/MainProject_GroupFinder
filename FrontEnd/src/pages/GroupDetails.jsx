@@ -1,19 +1,7 @@
 import React, { useState } from 'react';
 import {
   Box,
-  Typography,
-  TextField,
-  Button,
-  Divider,
-  List,
-  ListItem,
-  ListItemText,
-  AppBar,
-  Toolbar,
-  IconButton,
-  InputAdornment,
-  Menu,
-  MenuItem
+  Typography, TextField,Button,Divider,List,ListItem,ListItemText,AppBar,Toolbar,IconButton, InputAdornment, Menu,MenuItem
 } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -70,7 +58,7 @@ const GroupDetails = () => {
           </IconButton>
           <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
             <MenuItem onClick={() => { alert('🔕 Group muted'); handleClose(); }}>🔕 Mute Notifications</MenuItem>
-            <MenuItem onClick={() => { alert('⚙️ Preferences opened'); handleClose(); }}>⚙️ Preferences</MenuItem>
+           
             <MenuItem onClick={handleClose}>❌ Close</MenuItem>
           </Menu>
         </Toolbar>
