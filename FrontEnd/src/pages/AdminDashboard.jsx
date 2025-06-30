@@ -17,6 +17,12 @@ import {
   useTheme,
   Alert,
   CircularProgress,
+  TextField,
+  Divider,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
@@ -29,8 +35,11 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [groupSearch, setGroupSearch] = useState('');
+  const [userSearch, setUserSearch] = useState('');
+  const [sortOption, setSortOption] = useState('');
 
-useEffect(() => {
+  useEffect(() => {
     const fetchAdminData = async () => {
       setLoading(true);
       setError(null);
@@ -62,7 +71,7 @@ useEffect(() => {
     };
 
     fetchAdminData();
-  }, []);  
+  }, []);
 
   const handleApprove = (id) => {
     setGroups(prev => prev.map(g => (g.id === id ? { ...g, status: 'Approved' } : g)));
@@ -79,6 +88,24 @@ useEffect(() => {
   const handleManageUser = (id) => {
     navigate(`/admin/users/${id}`);
   };
+
+  let filteredGroups = groups.filter(group =>
+    group.name.toLowerCase().includes(groupSearch.toLowerCase())
+  );
+
+  if (sortOption === 'newest') {
+    filteredGroups = [...filteredGroups].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  } else if (sortOption === 'oldest') {
+    filteredGroups = [...filteredGroups].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  } else if (sortOption === 'approved') {
+    filteredGroups = [...filteredGroups].sort((a, b) => a.status.localeCompare(b.status));
+  } else if (sortOption === 'pending') {
+    filteredGroups = [...filteredGroups].sort((a, b) => b.status.localeCompare(a.status));
+  }
+
+  const filteredUsers = users.filter(user =>
+    user.name.includes(userSearch) || user.email.includes(userSearch)
+  );
 
   if (loading) {
     return (
@@ -102,192 +129,191 @@ useEffect(() => {
 
   return (
     <Box
+      sx={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        overflowY: 'auto',
+        background: 'linear-gradient(to bottom right, #1a1a2e, #2a003f)',
+        color: 'white',
+        boxSizing: 'border-box',
+        padding: '80px 24px 48px'
+      }}
+    >
+      <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>🛠 Admin Dashboard</Typography>
+
+      <Grid container spacing={2} justifyContent="space-between" alignItems="stretch" sx={{ mb: 4 }}>
+        {[{
+          label: 'Total Groups', value: groups.length, icon: '👥'
+        }, {
+          label: 'Approved Groups', value: groups.filter(g => g.status.includes('Approved')).length, icon: '✅'
+        }, {
+          label: 'Pending Groups', value: groups.filter(g => g.status.includes('Pending')).length, icon: '⏳'
+        }, {
+          label: 'Registered Users', value: users.length, icon: '📋'
+        }].map((item, index) => (
+          <Grid item xs={12} sm={6} md={3} key={index}>
+            <Card elevation={6} sx={{ height: '100%', backgroundColor: '#2e2e48', color: 'white', borderRadius: 3 }}>
+              <CardContent>
+                <Typography variant="subtitle2" sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: '0.95rem', fontWeight: 600 }}>{item.icon} {item.label}</Typography>
+                <Typography variant="h4" sx={{ mt: 1 }}>{item.value}</Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+
+      <Divider sx={{ mb: 3, borderColor: '#555' }} />
+
+      <Grid container spacing={2} sx={{ mb: 3 }}>
+        <Grid item xs={12} md={6}>
+          <TextField
+            label="Search Groups (Case Insensitive)"
+            variant="outlined"
+            fullWidth
+            value={groupSearch}
+            onChange={(e) => setGroupSearch(e.target.value)}
+            sx={{
+              input: { color: 'white' },
+              '& label': { color: 'white' },
+              '& fieldset': { borderColor: '#666' },
+              '& .MuiOutlinedInput-root': {
+                backgroundColor: '#2e2e48',
+                borderRadius: 2,
+                '&:hover fieldset': { borderColor: '#888' },
+                '&.Mui-focused fieldset': { borderColor: '#aaa' }
+              }
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <FormControl
+  fullWidth
   sx={{
-    minHeight: '100vh',
-    width: '100vw',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    background: 'linear-gradient(to bottom right, #2a003f, #1a1a2e)',
-    color: 'transparent',
-    padding: '80px 24px 24px', // Top padding for AppBar + page padding
-    boxSizing: 'border-box',
-    overflowX: 'hidden',
+    minWidth: 200, // ✅ This ensures visibility
+    '& label': { color: 'white' },
+    '& .MuiOutlinedInput-root': {
+      backgroundColor: '#2e2e48',
+      color: 'white',
+      '& fieldset': { borderColor: '#666' },
+      '&:hover fieldset': { borderColor: '#888' },
+      '&.Mui-focused fieldset': { borderColor: '#aaa' },
+    },
   }}
 >
+  <InputLabel>Sort By</InputLabel>
+  <Select
+    value={sortOption}
+    label="Sort By"
+    onChange={(e) => setSortOption(e.target.value)}
+  >
+    <MenuItem value="">None</MenuItem>
+    <MenuItem value="newest">Creation Date (Newest)</MenuItem>
+    <MenuItem value="oldest">Creation Date (Oldest)</MenuItem>
+    <MenuItem value="approved">Status (Approved First)</MenuItem>
+    <MenuItem value="pending">Status (Pending First)</MenuItem>
+  </Select>
+</FormControl>
 
+        </Grid>
+      </Grid>
 
-      <Typography variant="h4" gutterBottom>
-        🛠 Admin Dashboard
-      </Typography>
-
-      {/* Summary Cards */}
-      <Grid
-  container
-  spacing={2}
-  justifyContent="space-between"
-  alignItems="stretch"
-  sx={{ mb: 4 }}
->
-  {[
-    { label: 'Total Groups', value: groups.length, icon: '👥' },
-    { label: 'Approved Groups', value: groups.filter(g => g.status === 'Approved').length, icon: '✅' },
-    { label: 'Pending Groups', value: groups.filter(g => g.status === 'Pending').length, icon: '⏳' },
-    { label: 'Registered Users', value: users.length, icon: '📋' }
-  ].map((item, index) => (
-    <Grid item xs={12} sm={6} md={3} key={index}>
-      <Card
-        elevation={4}
-        sx={{
-          height: '100%',
-          backgroundColor: 'rgba(255, 255, 255, 0.05)',
-          color: 'white',
-        }}
-      >
+      <Card sx={{ backgroundColor: '#2e2e48', color: 'white', mb: 5 }}>
         <CardContent>
-          <Typography
-            variant="subtitle2"
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1,
-              fontSize: '0.9rem',
-              fontWeight: 500,
-            }}
-          >
-            {item.icon} {item.label}
-          </Typography>
-          <Typography variant="h4">{item.value}</Typography>
+          <Typography variant="h6" gutterBottom>📘 Study Group Management</Typography>
+          <TableContainer component={Paper} sx={{ backgroundColor: 'transparent' }}>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ color: 'white' }}>Group Name</TableCell>
+                  <TableCell sx={{ color: 'white' }}>Members</TableCell>
+                  <TableCell sx={{ color: 'white' }}>Status</TableCell>
+                  <TableCell align="center" sx={{ color: 'white' }}>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredGroups.map(group => (
+                  <TableRow key={group.id}>
+                    <TableCell sx={{ color: 'white' }}>{group.name}</TableCell>
+                    <TableCell sx={{ color: 'white' }}>{group.members}</TableCell>
+                    <TableCell sx={{ color: group.status.includes('Approved') ? '#00e676' : '#ffb74d', fontWeight: 600 }}>{group.status}</TableCell>
+                    <TableCell align="center">
+                      <Grid container spacing={1} justifyContent="center">
+                        <Grid item>
+                          <Button size="small" variant="contained" sx={{ backgroundColor: '#1E3A8A', color: 'white' }} onClick={() => handleViewGroup(group.id)}>View</Button>
+                        </Grid>
+                        <Grid item>
+                          <Button size="small" variant="contained" sx={{ backgroundColor: '#14532D', color: 'white' }} onClick={() => handleApprove(group.id)} disabled={group.status.includes('Approved')}>Approve</Button>
+                        </Grid>
+                        <Grid item>
+                          <Button size="small" variant="contained" sx={{ backgroundColor: '#7F1D1D', color: 'white' }} onClick={() => handleDelete(group.id)}>Delete</Button>
+                        </Grid>
+                      </Grid>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </CardContent>
       </Card>
-    </Grid>
-  ))}
-</Grid>
 
+      <Divider sx={{ mb: 3, borderColor: '#555' }} />
 
-      {/* Groups Table */}
-      <Card
-  elevation={4}
-  sx={{
-    mb: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    color: 'white',
-  }}
->
-  <CardContent>
-    <Typography variant="h6" gutterBottom>
-      📘 Study Group Management
-    </Typography>
+      <TextField
+        label="Search Users (Case Sensitive)"
+        variant="outlined"
+        fullWidth
+        value={userSearch}
+        onChange={(e) => setUserSearch(e.target.value)}
+        sx={{
+          mb: 3,
+          input: { color: 'white' },
+          '& label': { color: 'white' },
+          '& fieldset': { borderColor: '#666' },
+          '& .MuiOutlinedInput-root': {
+            backgroundColor: '#2e2e48',
+            borderRadius: 2,
+            '&:hover fieldset': { borderColor: '#888' },
+            '&.Mui-focused fieldset': { borderColor: '#aaa' }
+          }
+        }}
+      />
 
-    <TableContainer component={Paper} sx={{ backgroundColor: 'transparent' }}>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell sx={{ color: 'white' }}>Group Name</TableCell>
-            <TableCell sx={{ color: 'white' }}>Members</TableCell>
-            <TableCell sx={{ color: 'white' }}>Status</TableCell>
-            <TableCell align="center" sx={{ color: 'white' }}>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {groups.map(group => (
-            <TableRow key={group.id}>
-              <TableCell sx={{ color: 'white' }}>{group.name}</TableCell>
-              <TableCell sx={{ color: 'white' }}>{group.members}</TableCell>
-              <TableCell sx={{ color: 'white' }}>{group.status}</TableCell>
-              <TableCell align="center">
-                <Grid container spacing={1} justifyContent="center">
-                  <Grid item>
-                    <Button
-                      size="small"
-                      variant="contained"
-                      sx={{ backgroundColor: '#1E3A8A', color: 'white' }}
-                      onClick={() => handleViewGroup(group.id)}
-                    >
-                      View
-                    </Button>
-                  </Grid>
-                  <Grid item>
-                    <Button
-                      size="small"
-                      variant="contained"
-                      sx={{ backgroundColor: '#14532D', color: 'white' }}
-                      onClick={() => handleApprove(group.id)}
-                      disabled={group.status === 'Approved'}
-                    >
-                      Approve
-                    </Button>
-                  </Grid>
-                  <Grid item>
-                    <Button
-                      size="small"
-                      variant="contained"
-                      sx={{ backgroundColor: '#7F1D1D', color: 'white' }}
-                      onClick={() => handleDelete(group.id)}
-                    >
-                      Delete
-                    </Button>
-                  </Grid>
-                </Grid>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  </CardContent>
-</Card>
-
-
-      {/* Users Table */}
-      <Card
-  elevation={4}
-  sx={{
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    color: 'white',
-  }}
->
-  <CardContent>
-    <Typography variant="h6" gutterBottom>
-      👥 Registered Users
-    </Typography>
-
-    <TableContainer component={Paper} sx={{ backgroundColor: 'transparent' }}>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell sx={{ color: 'white' }}>Name</TableCell>
-            <TableCell sx={{ color: 'white' }}>Email</TableCell>
-            <TableCell sx={{ color: 'white' }}>Registered At</TableCell>
-            <TableCell align="center" sx={{ color: 'white' }}>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {users.map(user => (
-            <TableRow key={user.id}>
-              <TableCell sx={{ color: 'white' }}>{user.name}</TableCell>
-              <TableCell sx={{ color: 'white' }}>{user.email}</TableCell>
-              <TableCell sx={{ color: 'white' }}>{user.registeredAt}</TableCell>
-              <TableCell align="center">
-                <Button
-                  size="small"
-                  variant="contained"
-                  sx={{ backgroundColor: '#7C5B82', color: 'white' }}
-                  onClick={() => handleManageUser(user.id)}
-                >
-                  Manage
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  </CardContent>
-</Card>
-
+      <Card sx={{ backgroundColor: '#2e2e48', color: 'white' }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom>👥 Registered Users</Typography>
+          <TableContainer component={Paper} sx={{ backgroundColor: 'transparent' }}>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ color: 'white' }}>Name</TableCell>
+                  <TableCell sx={{ color: 'white' }}>Email</TableCell>
+                  <TableCell sx={{ color: 'white' }}>Registered At</TableCell>
+                  <TableCell align="center" sx={{ color: 'white' }}>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredUsers.map(user => (
+                  <TableRow key={user.id}>
+                    <TableCell sx={{ color: 'white' }}>{user.name}</TableCell>
+                    <TableCell sx={{ color: 'white' }}>{user.email}</TableCell>
+                    <TableCell sx={{ color: 'white' }}>{user.registeredAt}</TableCell>
+                    <TableCell align="center">
+                      <Button size="small" variant="contained" sx={{ backgroundColor: '#7C5B82', color: 'white' }} onClick={() => handleManageUser(user.id)}>
+                        Manage
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </CardContent>
+      </Card>
     </Box>
-    
   );
 };
 
