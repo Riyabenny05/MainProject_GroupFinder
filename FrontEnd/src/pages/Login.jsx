@@ -4,50 +4,55 @@ import {
   TextField,
   Button,
   Typography,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   useMediaQuery,
   useTheme,
   Paper,
   Link as MuiLink,
 } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // ✅ Make sure this import is correct
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { login } = useAuth(); // ✅ hook from context
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('user');
 
-  const handleLogin = (e) => {
-  e.preventDefault();
+  const handleLogin = async (e) => {
+    e.preventDefault();
 
-  // 🧠 Determine role based on email
-  const role = email === 'admin@example.com' ? 'admin' : 'user';
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-  const userData = {
-    email,
-    role,
-    name: role === 'admin' ? 'Admin User' : 'Regular User',
+      const data = await res.json();
+
+      if (res.ok) {
+        // ✅ Save token and user
+        login(data.user, data.token);
+
+        // ✅ Navigate based on role
+        if (data.user.role === 'admin') {
+          navigate('/admin-dashboard');
+        } else {
+          navigate('/home');
+        }
+      } else {
+        alert(data.error || 'Login failed');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      alert('Login failed due to network or server error');
+    }
   };
-
-  login(userData);
-
-  // 🔁 Redirect
-  if (role === 'admin') {
-    navigate('/admin-dashboard');
-  } else {
-    navigate('/home');
-  }
-};
-
 
   return (
     <Box

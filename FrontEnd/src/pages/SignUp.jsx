@@ -13,7 +13,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import axios from '../utils/axios'; // ✅ Correctly configured axios instance
+import axios from '../utils/axios'; 
 
 const SignUp = () => {
   const navigate = useNavigate();

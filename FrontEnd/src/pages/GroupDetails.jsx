@@ -18,13 +18,14 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 const GroupDetails = () => {
-  const { state } = useLocation();
-  const { title, subject, description, groupId } = state || {};
+  const location = useLocation();
   const navigate = useNavigate();
+  const { state } = location || {};
+  const { title, subject, description, groupId } = state || {};
 
   const [messages, setMessages] = useState([
     { text: 'Welcome to the group!', sender: 'Admin' },
-    { text: 'Let\'s start learning React!', sender: 'Riya Benny' },
+    { text: "Let's start learning React!", sender: 'Riya Benny' },
   ]);
   const [newMsg, setNewMsg] = useState('');
   const [materials, setMaterials] = useState([
@@ -40,8 +41,6 @@ const GroupDetails = () => {
   const handleDeleteGroup = () => {
     const confirmDelete = window.confirm('Are you sure you want to delete this group?');
     if (confirmDelete) {
-      // TODO: Replace this with actual API call to delete the group
-      console.log('Deleting group:', groupId);
       alert('Group deleted successfully!');
       navigate('/Home');
     }
@@ -59,9 +58,16 @@ const GroupDetails = () => {
     setNewMaterial('');
   };
 
+  if (!title) {
+    return (
+      <Box sx={{ color: 'white', backgroundColor: 'black', minHeight: '100vh', p: 4 }}>
+        <Typography variant="h6">No group data available. Please try again.</Typography>
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ color: 'white', backgroundColor: 'black', minHeight: '100vh' }}>
-      {/* Top Navbar with Settings */}
       <AppBar position="static" sx={{ backgroundColor: '#2e2e2e' }}>
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>{title} Settings</Typography>
@@ -84,7 +90,6 @@ const GroupDetails = () => {
 
         <Divider sx={{ my: 4, bgcolor: 'gray' }} />
 
-        {/* Members */}
         <Typography variant="h6" sx={{ mb: 1 }}>👥 Members</Typography>
         <List sx={{ maxWidth: 300 }}>
           {members.map((m, idx) => (
@@ -96,7 +101,6 @@ const GroupDetails = () => {
 
         <Divider sx={{ my: 4, bgcolor: 'gray' }} />
 
-        {/* Group Messages */}
         <Typography variant="h6">💬 Group Messages</Typography>
         <Box sx={{ maxWidth: 600, mt: 2 }}>
           {messages.map((msg, idx) => (
@@ -118,7 +122,6 @@ const GroupDetails = () => {
 
         <Divider sx={{ my: 4, bgcolor: 'gray' }} />
 
-        {/* Study Materials */}
         <Typography variant="h6">📂 Study Materials</Typography>
         <Box sx={{ maxWidth: 600, mt: 2 }}>
           {materials.map((mat, idx) => (

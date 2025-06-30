@@ -1,12 +1,24 @@
+// routes/groupRoutes.js
 const express = require('express');
 const router = express.Router();
- 
-const auth = require('../middleware/authMiddleware');
-const { createGroup, getGroups, joinGroup, leaveGroup } = require('../controlers/groupController');
+const groupController = require('../controlers/groupController');
+const authMiddleware = require('../middleware/authMiddleware');
 
-router.get('/', getGroups);
-router.post('/', auth, createGroup);
-router.post('/:id/join', auth, joinGroup);
-router.post('/:id/leave', auth, leaveGroup);
+const {
+  createGroup,
+  getAllGroups,
+  joinGroup,
+  leaveGroup,
+  deleteGroup,
+  getGroupById, 
+} = require('../controlers/groupController'); 
+// Apply middleware here 👇
+router.post('/', authMiddleware, groupController.createGroup);
+
+// Other routes...
+router.get('/', groupController.getGroups);
+router.post('/:id/join', authMiddleware, groupController.joinGroup);
+router.post('/:id/leave', authMiddleware, groupController.leaveGroup);
+router.get('/:id', getGroupById);
 
 module.exports = router;

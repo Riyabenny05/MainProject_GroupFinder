@@ -33,7 +33,7 @@ function App() {
         <Route path="/groupcard" element={<GroupCard />} />
         <Route path="/group/:id" element={<GroupDetails />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
-
+        
         {/* Admin Protected Routes */}
         <Route
           path="/admin-dashboard"
