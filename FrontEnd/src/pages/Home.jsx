@@ -19,7 +19,7 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import StudyGroupCard from "../components/GroupCard";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import splashVideo from "../assets/Animated_grid.mp4"; // ✅_viedo.mp4"; // ✅ video import
+import splashVideo from "../assets/Animated_grid.mp4"; // ✅ video import
 
 const Home = () => {
   const navigate = useNavigate();
@@ -88,7 +88,6 @@ const Home = () => {
 
   return (
     <>
-      {/* Global style to remove body scroll and padding */}
       <style>{`
         html, body {
           margin: 0;
@@ -97,7 +96,6 @@ const Home = () => {
         }
       `}</style>
 
-      {/* Background Video */}
       <Box
         sx={{
           position: "fixed",
@@ -123,7 +121,6 @@ const Home = () => {
           <source src={splashVideo} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
-        {/* Optional dark overlay */}
         <Box
           sx={{
             position: "absolute",
@@ -137,7 +134,6 @@ const Home = () => {
         />
       </Box>
 
-      {/* Foreground Content */}
       <Box
         sx={{
           color: "white",
@@ -148,8 +144,17 @@ const Home = () => {
           overflowY: "auto",
         }}
       >
-        {/* Navbar */}
-        <AppBar position="static" sx={{ backgroundColor: "#1a1a2e", zIndex: 3 }}>
+        <AppBar
+          position="static"
+          sx={{
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(15px)',
+            WebkitBackdropFilter: 'blur(15px)',
+            borderBottom: '0.5px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
+            zIndex: 3,
+          }}
+        >
           <Toolbar>
             <TextField
               size="small"
@@ -170,7 +175,6 @@ const Home = () => {
           </Toolbar>
         </AppBar>
 
-        {/* Menu in Navbar */}
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
           <MenuItem onClick={() => setOpenCreateModal(true)}>
             <AddCircleOutlineIcon sx={{ mr: 1 }} /> Create Group
@@ -183,7 +187,6 @@ const Home = () => {
           </MenuItem>
         </Menu>
 
-        {/* Page Content */}
         <Box sx={{ px: 4, py: 8 }}>
           <Typography variant="h2" align="center" gutterBottom>
             🎯 Unite to Learn
@@ -192,7 +195,6 @@ const Home = () => {
             Team up! Learn fast! Reach farther!...👥
           </Typography>
 
-          {/* Create Group Button */}
           <Box display="flex" justifyContent="center" mb={6}>
             <Button
               variant="contained"
@@ -204,7 +206,6 @@ const Home = () => {
             </Button>
           </Box>
 
-          {/* Group Cards */}
           <Grid container spacing={6} justifyContent="center">
             {filteredGroups.length === 0 ? (
               <Typography variant="body1" color="gray">
@@ -225,7 +226,6 @@ const Home = () => {
           </Grid>
         </Box>
 
-        {/* Create Group Modal */}
         <Modal open={openCreateModal} onClose={() => setOpenCreateModal(false)}>
           <Box
             sx={{
