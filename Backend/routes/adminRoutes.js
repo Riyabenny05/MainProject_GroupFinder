@@ -1,13 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/authMiddleware');
-const role = require('../middleware/roleMiddleware');
-const { getAllGroups, approveGroup, deleteGroup, blockUser } = require('../controlers/adminController');
 
-router.use(auth, role('admin'));
-router.get('/groups', getAllGroups);
-router.put('/groups/:id/approve', approveGroup);
-router.delete('/groups/:id', deleteGroup);
-router.delete('/users/:id', blockUser);
+// ✅ Corrected folder path (controlers not controllers)
+const { getAllUsers, approveGroup, deleteUser } = require('../controlers/adminController');
+
+const authMiddleware = require('../middleware/authMiddleware');
+const roleMiddleware = require('../middleware/roleMiddleware');
+
+// ✅ Admin-only protected routes
+router.get('/users', authMiddleware, roleMiddleware('admin'), getAllUsers);
+router.put('/groups/:id/approve', authMiddleware, roleMiddleware('admin'), approveGroup);
+router.delete('/users/:id', authMiddleware, roleMiddleware('admin'), deleteUser);
 
 module.exports = router;

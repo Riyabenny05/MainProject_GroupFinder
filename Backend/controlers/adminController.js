@@ -1,22 +1,40 @@
-const Group = require('../models/Group');
 const User = require('../models/user');
+const Group = require('../models/group');
 
-exports.getAllGroups = async (req, res) => {
-  const groups = await Group.find();
-  res.json(groups);
+// ✅ Get all users (for admin)
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select('-password'); // Exclude password
+    res.json(users);
+  } catch (err) {
+    console.error('Get users error:', err.message);
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }
 };
 
+// ✅ Approve a group
 exports.approveGroup = async (req, res) => {
-  const group = await Group.findByIdAndUpdate(req.params.id, { approved: true }, { new: true });
-  res.json(group);
+  try {
+    const groupId = req.params.id;
+    const group = await Group.findByIdAndUpdate(groupId, { approved: true }, { new: true });
+
+    if (!group) return res.status(404).json({ error: 'Group not found' });
+
+    res.json({ message: 'Group approved successfully', group });
+  } catch (err) {
+    console.error('Approve group error:', err.message);
+    res.status(500).json({ error: 'Failed to approve group' });
+  }
 };
 
-exports.deleteGroup = async (req, res) => {
-  await Group.findByIdAndDelete(req.params.id);
-  res.json({ message: 'Group deleted' });
-};
-
-exports.blockUser = async (req, res) => {
-  await User.findByIdAndDelete(req.params.id);
-  res.json({ message: 'User blocked/deleted' });
+// ✅ Delete user
+exports.deleteUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    await User.findByIdAndDelete(userId);
+    res.json({ message: 'User deleted successfully' });
+  } catch (err) {
+    console.error('Delete user error:', err.message);
+    res.status(500).json({ error: 'Failed to delete user' });
+  }
 };

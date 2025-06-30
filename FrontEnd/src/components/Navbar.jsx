@@ -54,11 +54,14 @@ const CustomNavbar = () => {
               <Button color="inherit" component={Link} to="/signup">
                 Sign Up
               </Button>
+              
             </>
           ) : (
             <Button color="inherit" onClick={handleLogout}>
               Logout
             </Button>
+            
+            
           )}
         </Box>
       </Toolbar>
