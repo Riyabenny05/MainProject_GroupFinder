@@ -1,32 +1,51 @@
 import React, { useState } from 'react';
 import {
   Box,
-  Typography, TextField,Button,Divider,List,ListItem,ListItemText,AppBar,Toolbar,IconButton, InputAdornment, Menu,MenuItem
+  Typography,
+  TextField,
+  Button,
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+  AppBar,
+  Toolbar,
+  IconButton,
+  Menu,
+  MenuItem,
 } from '@mui/material';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import SettingsIcon from '@mui/icons-material/Settings';
-import SearchIcon from '@mui/icons-material/Search';
 
 const GroupDetails = () => {
   const { state } = useLocation();
   const { title, subject, description, groupId } = state || {};
+  const navigate = useNavigate();
 
   const [messages, setMessages] = useState([
     { text: 'Welcome to the group!', sender: 'Admin' },
-    { text: 'Lets start learning React!', sender: 'Riya Benny' }
+    { text: 'Let\'s start learning React!', sender: 'Riya Benny' },
   ]);
   const [newMsg, setNewMsg] = useState('');
   const [materials, setMaterials] = useState([
-    { link: 'https://reactjs.org', uploader: 'Admin' }
+    { link: 'https://reactjs.org', uploader: 'Admin' },
   ]);
   const [newMaterial, setNewMaterial] = useState('');
   const [members] = useState(['Riya Benny', 'Dayona', 'Jofia', 'Karthik']);
-  const [searchTerm, setSearchTerm] = useState('');
-
-  // Settings Menu State
   const [anchorEl, setAnchorEl] = useState(null);
+
   const handleSettingsClick = (event) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
+
+  const handleDeleteGroup = () => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this group?');
+    if (confirmDelete) {
+      // TODO: Replace this with actual API call to delete the group
+      console.log('Deleting group:', groupId);
+      alert('Group deleted successfully!');
+      navigate('/Home');
+    }
+  };
 
   const handleSendMessage = () => {
     if (newMsg.trim() === '') return;
@@ -40,13 +59,6 @@ const GroupDetails = () => {
     setNewMaterial('');
   };
 
-  const filteredMessages = messages.filter(msg =>
-    msg.text.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  const filteredMaterials = materials.filter(mat =>
-    mat.link.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <Box sx={{ color: 'white', backgroundColor: 'black', minHeight: '100vh' }}>
       {/* Top Navbar with Settings */}
@@ -58,7 +70,7 @@ const GroupDetails = () => {
           </IconButton>
           <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
             <MenuItem onClick={() => { alert('🔕 Group muted'); handleClose(); }}>🔕 Mute Notifications</MenuItem>
-           
+            <MenuItem onClick={handleDeleteGroup}>🗑️ Delete Group</MenuItem>
             <MenuItem onClick={handleClose}>❌ Close</MenuItem>
           </Menu>
         </Toolbar>
@@ -69,8 +81,6 @@ const GroupDetails = () => {
         <Typography variant="subtitle1">Subject: {subject}</Typography>
         <Typography variant="body1" sx={{ mb: 2 }}>{description}</Typography>
         <Typography variant="caption" color="gray">Group ID: {groupId}</Typography>
-
-        
 
         <Divider sx={{ my: 4, bgcolor: 'gray' }} />
 
@@ -89,7 +99,7 @@ const GroupDetails = () => {
         {/* Group Messages */}
         <Typography variant="h6">💬 Group Messages</Typography>
         <Box sx={{ maxWidth: 600, mt: 2 }}>
-          {filteredMessages.map((msg, idx) => (
+          {messages.map((msg, idx) => (
             <Typography key={idx} sx={{ mb: 1 }}>
               <strong>{msg.sender}:</strong> {msg.text}
             </Typography>
@@ -111,7 +121,7 @@ const GroupDetails = () => {
         {/* Study Materials */}
         <Typography variant="h6">📂 Study Materials</Typography>
         <Box sx={{ maxWidth: 600, mt: 2 }}>
-          {filteredMaterials.map((mat, idx) => (
+          {materials.map((mat, idx) => (
             <Typography key={idx} sx={{ mb: 1 }}>
               <a href={mat.link} target="_blank" rel="noreferrer" style={{ color: '#90caf9' }}>
                 {mat.link}

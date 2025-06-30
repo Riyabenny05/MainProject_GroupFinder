@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from '../utils/axios';
 import {
   Box,
   TextField,
@@ -13,50 +12,42 @@ import {
   useTheme,
   Paper,
   Link as MuiLink,
-  Alert,
 } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext'; // ✅ Make sure this import is correct
 
 const Login = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { login } = useAuth();
+  const { login } = useAuth(); // ✅ hook from context
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('user');
-  const [error, setError] = useState('');
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError('');
+  const handleLogin = (e) => {
+  e.preventDefault();
 
-    try {
-      const res = await axios.post('/auth/login', { email, password });
+  // 🧠 Determine role based on email
+  const role = email === 'admin@example.com' ? 'admin' : 'user';
 
-      const { token, user } = res.data;
-
-      if (user.role !== role) {
-        setError(`You are not authorized as a "${role}"`);
-        return;
-      }
-
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
-
-      login(user, token);
-
-      if (user.role === 'admin') {
-        navigate('/admin-dashboard');
-      } else {
-        navigate('/home');
-      }
-    } catch (err) {
-      setError(err.response?.data?.error || 'Login failed. Please try again.');
-    }
+  const userData = {
+    email,
+    role,
+    name: role === 'admin' ? 'Admin User' : 'Regular User',
   };
+
+  login(userData);
+
+  // 🔁 Redirect
+  if (role === 'admin') {
+    navigate('/admin-dashboard');
+  } else {
+    navigate('/home');
+  }
+};
+
 
   return (
     <Box
@@ -81,12 +72,6 @@ const Login = () => {
           Login
         </Typography>
 
-        {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {error}
-          </Alert>
-        )}
-
         <form onSubmit={handleLogin} autoComplete="off">
           <TextField
             label="Email"
@@ -107,20 +92,6 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-
-          <FormControl fullWidth margin="normal">
-            <InputLabel>Role</InputLabel>
-            <Select
-              value={role}
-              label="Role"
-              onChange={(e) => setRole(e.target.value)}
-              required
-            >
-              <MenuItem value="user">User</MenuItem>
-              <MenuItem value="admin">Admin</MenuItem>
-            </Select>
-          </FormControl>
-
           <Button
             fullWidth
             type="submit"

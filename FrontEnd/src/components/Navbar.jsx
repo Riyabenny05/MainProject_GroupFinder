@@ -42,13 +42,13 @@ const CustomNavbar = () => {
         </Typography>
 
         <Box>
-          <Button color="inherit" component={Link} to={homePath}>
+          <Button color="white" component={Link} to={homePath}>
             Home
           </Button>
 
           {!user ? (
             <>
-              <Button color="inherit" component={Link} to="/login">
+              <Button color="white" component={Link} to="/login">
                 Login
               </Button>
               <Button color="inherit" component={Link} to="/signup">
