@@ -34,6 +34,7 @@ exports.createGroup = async (req, res) => {
   }
 };
 
+
 // ✅ Get all approved groups
 exports.getGroups = async (req, res) => {
   try {
@@ -90,5 +91,23 @@ exports.leaveGroup = async (req, res) => {
   } catch (err) {
     console.error("❌ Failed to leave group:", err);
     res.status(500).json({ error: 'Failed to leave group' });
+  }
+};
+// ✅ Delete a group
+exports.deleteGroup = async (req, res) => {
+  try {
+    const group = await Group.findById(req.params.id);
+    if (!group) return res.status(404).json({ error: 'Group not found' });
+
+    // Optional: allow only the creator to delete
+    if (group.creator.toString() !== req.user.id) {
+      return res.status(403).json({ error: 'Only the creator can delete this group' });
+    }
+
+    await group.deleteOne();
+    res.json({ message: 'Group deleted successfully' });
+  } catch (err) {
+    console.error("❌ Failed to delete group:", err);
+    res.status(500).json({ error: 'Failed to delete group' });
   }
 };
