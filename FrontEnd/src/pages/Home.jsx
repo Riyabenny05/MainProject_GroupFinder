@@ -77,7 +77,7 @@ const Home = () => {
         },
       });
       const createdGroup = res.data;
-      setGroups((prev) => [...prev.filter((g) => !g._id.startsWith("d")), createdGroup]);
+      setGroups((prev) => [...prev, createdGroup]); // ✅ Only add the new group
       setGroupName("");
       setSubject("");
       setMembers("");
@@ -89,16 +89,26 @@ const Home = () => {
   };
 
   const handleDeleteGroup = async (groupId) => {
-    if (!window.confirm("Are you sure you want to delete this group?")) return;
+    const confirm = window.confirm("Are you sure you want to delete this group?");
+    if (!confirm) return;
+
     try {
+      if (groupId.startsWith("d")) {
+        setGroups((prev) => prev.filter((g) => g._id !== groupId));
+        return;
+      }
+
       const token = localStorage.getItem("token");
       await axios.delete(`/groups/${groupId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
       setGroups((prev) => prev.filter((g) => g._id !== groupId));
+      alert("Group deleted successfully!");
     } catch (err) {
+      console.error("Delete failed:", err);
       alert("Failed to delete group.");
     }
   };
@@ -118,6 +128,7 @@ const Home = () => {
         });
         setGroups([...res.data, ...dummyGroups]);
       } catch (err) {
+        console.error("Failed to fetch groups", err);
         setGroups(dummyGroups);
       }
     };
@@ -179,7 +190,7 @@ const Home = () => {
                   <StudyGroupCard
                     {...group}
                     onJoin={() => handleJoinGroup(group)}
-                    onDelete={group._id.startsWith("d") ? null : () => handleDeleteGroup(group._id)}
+                    onDelete={() => handleDeleteGroup(group._id)}
                   />
                 </Grid>
               ))
