@@ -126,11 +126,23 @@ const Home = () => {
             Authorization: `Bearer ${token}`,
           },
         });
+        const approvedGroups = res.data.filter(group => {
+  if (group.rejected) {
+    alert("❌ Sorry! Your group is rejected by admin.");
+    return false;
+  }
+  return group.approved;
+});
+setGroups([...approvedGroups, ...dummyGroups]);
+
         setGroups([...res.data, ...dummyGroups]);
       } catch (err) {
         console.error("Failed to fetch groups", err);
         setGroups(dummyGroups);
       }
+      const res = await axios.get("/groups");
+setGroups([...res.data.filter(g => g.approved), ...dummyGroups]);
+
     };
     fetchGroups();
   }, []);
