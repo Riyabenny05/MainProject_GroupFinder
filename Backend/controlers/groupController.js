@@ -6,9 +6,6 @@ const User = require('../models/user');
 // ✅ Create a new group
 exports.createGroup = async (req, res) => {
   try {
-    console.log("🔍 Incoming request body:", req.body);
-    console.log("👤 Authenticated user:", req.user);
-
     const { title, subject, description } = req.body;
 
     if (!title || !subject || !description) {
@@ -19,17 +16,15 @@ exports.createGroup = async (req, res) => {
       title,
       subject,
       description,
-      creator: req.user.id, // from authMiddleware
-      members: [req.user.id], // add creator as first member
-      approved: true, // optional: if approval logic exists
+      creator: req.user.id,
+      members: [req.user.id],
+      approved: false, // pending approval
+      rejected: false
     });
 
     await newGroup.save();
-    console.log("✅ Group created successfully:", newGroup);
-
     res.status(201).json(newGroup);
   } catch (err) {
-    console.error("❌ Group creation failed:", err); // log full error object
     res.status(500).json({ error: 'Server error while creating group' });
   }
 };
@@ -99,8 +94,11 @@ exports.deleteGroup = async (req, res) => {
     const group = await Group.findById(req.params.id);
     if (!group) return res.status(404).json({ error: 'Group not found' });
 
-    // Optional: allow only the creator to delete
-    if (group.creator.toString() !== req.user.id) {
+    console.log("🧠 Creator from DB:", group.creator.toString());
+    console.log("🧠 Authenticated user ID:", req.user.id);
+
+    // ✅ Correct comparison using .equals()
+    if (!group.creator.equals(req.user.id)) {
       return res.status(403).json({ error: 'Only the creator can delete this group' });
     }
 

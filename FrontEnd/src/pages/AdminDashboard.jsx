@@ -46,11 +46,12 @@ const AdminDashboard = () => {
       setError(null);
       try {
         const token = localStorage.getItem("token");
-
-        const [groupRes, userRes] = await Promise.all([
-          axios.get("/groups/all", { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get("/users", { headers: { Authorization: `Bearer ${token}` } }),
-        ]);
+        const groupRes = await axios.get("/admin/groups", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const userRes = await axios.get("/admin/users", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         setGroups(groupRes.data);
         setUsers(userRes.data);
@@ -68,24 +69,36 @@ const AdminDashboard = () => {
   const handleApprove = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.post(`/admin/groups/${id}/approve`, {}, {
+      await axios.patch(`/admin/groups/${id}/approve`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setGroups(prev => prev.map(g => (g._id === id ? { ...g, approved: true, rejected: false } : g)));
+      setGroups(prev => prev.map(g => g._id === id ? { ...g, approved: true, rejected: false } : g));
     } catch (err) {
-      console.error("Failed to approve group", err);
+      alert("Approval failed");
     }
   };
 
   const handleReject = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.post(`/admin/groups/${id}/reject`, {}, {
+      await axios.patch(`/admin/groups/${id}/reject`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setGroups(prev => prev.map(g => (g._id === id ? { ...g, approved: false, rejected: true } : g)));
+      setGroups(prev => prev.map(g => g._id === id ? { ...g, approved: false, rejected: true } : g));
     } catch (err) {
-      console.error("Failed to reject group", err);
+      alert("Rejection failed");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`/groups/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setGroups(prev => prev.filter(g => g._id !== id));
+    } catch (err) {
+      alert("Failed to delete group");
     }
   };
 
@@ -97,8 +110,22 @@ const AdminDashboard = () => {
     navigate(`/admin/users/${id}`);
   };
 
-  const filteredGroups = groups.filter(group =>
+  let filteredGroups = groups.filter(group =>
     group.title?.toLowerCase().includes(groupSearch.toLowerCase())
+  );
+
+  if (sortOption === 'newest') {
+    filteredGroups = [...filteredGroups].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  } else if (sortOption === 'oldest') {
+    filteredGroups = [...filteredGroups].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  } else if (sortOption === 'approved') {
+    filteredGroups = [...filteredGroups].sort((a, b) => b.approved - a.approved);
+  } else if (sortOption === 'pending') {
+    filteredGroups = [...filteredGroups].sort((a, b) => a.approved - b.approved);
+  }
+
+  const filteredUsers = users.filter(user =>
+    user.name.includes(userSearch) || user.email.includes(userSearch)
   );
 
   if (loading) {
@@ -138,11 +165,32 @@ const AdminDashboard = () => {
     >
       <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>🛠 Admin Dashboard</Typography>
 
-      <Divider sx={{ my: 3, borderColor: '#555' }} />
+      <Grid container spacing={2} justifyContent="space-between" alignItems="stretch" sx={{ mb: 4 }}>
+        {[{
+          label: 'Total Groups', value: groups.length, icon: '👥'
+        }, {
+          label: 'Approved Groups', value: groups.filter(g => g.approved).length, icon: '✅'
+        }, {
+          label: 'Pending Groups', value: groups.filter(g => !g.approved && !g.rejected).length, icon: '⏳'
+        }, {
+          label: 'Registered Users', value: users.length, icon: '📋'
+        }].map((item, index) => (
+          <Grid item xs={12} sm={6} md={3} key={index}>
+            <Card elevation={6} sx={{ height: '100%', backgroundColor: '#2e2e48', color: 'white', borderRadius: 3 }}>
+              <CardContent>
+                <Typography variant="subtitle2" sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: '0.95rem', fontWeight: 600 }}>{item.icon} {item.label}</Typography>
+                <Typography variant="h4" sx={{ mt: 1 }}>{item.value}</Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+
+      <Divider sx={{ mb: 3, borderColor: '#555' }} />
 
       <Card sx={{ backgroundColor: '#2e2e48', color: 'white', mb: 5 }}>
         <CardContent>
-          <Typography variant="h6" gutterBottom>📘 Pending Study Groups</Typography>
+          <Typography variant="h6" gutterBottom>📘 Study Group Management</Typography>
           <TableContainer component={Paper} sx={{ backgroundColor: 'transparent' }}>
             <Table size="small">
               <TableHead>
@@ -157,9 +205,9 @@ const AdminDashboard = () => {
                 {filteredGroups.map(group => (
                   <TableRow key={group._id}>
                     <TableCell sx={{ color: 'white' }}>{group.title}</TableCell>
-                    <TableCell sx={{ color: 'white' }}>{group.members?.length || 0}</TableCell>
-                    <TableCell sx={{ color: group.approved ? '#00e676' : group.rejected ? '#ff4d4d' : '#ffb74d', fontWeight: 600 }}>
-                      {group.approved ? "Approved" : group.rejected ? "Rejected" : "Pending"}
+                    <TableCell sx={{ color: 'white' }}>{group.members.length}</TableCell>
+                    <TableCell sx={{ color: group.approved ? '#00e676' : group.rejected ? 'red' : '#ffb74d', fontWeight: 600 }}>
+                      {group.approved ? 'Approved' : group.rejected ? 'Rejected' : 'Pending'}
                     </TableCell>
                     <TableCell align="center">
                       <Grid container spacing={1} justifyContent="center">
@@ -170,7 +218,10 @@ const AdminDashboard = () => {
                           <Button size="small" variant="contained" sx={{ backgroundColor: '#14532D', color: 'white' }} onClick={() => handleApprove(group._id)} disabled={group.approved}>Approve</Button>
                         </Grid>
                         <Grid item>
-                          <Button size="small" variant="contained" sx={{ backgroundColor: '#7F1D1D', color: 'white' }} onClick={() => handleReject(group._id)} disabled={group.rejected}>Reject</Button>
+                          <Button size="small" variant="contained" sx={{ backgroundColor: 'orange', color: 'white' }} onClick={() => handleReject(group._id)} disabled={group.rejected}>Reject</Button>
+                        </Grid>
+                        <Grid item>
+                          <Button size="small" variant="contained" sx={{ backgroundColor: '#7F1D1D', color: 'white' }} onClick={() => handleDelete(group._id)}>Delete</Button>
                         </Grid>
                       </Grid>
                     </TableCell>
