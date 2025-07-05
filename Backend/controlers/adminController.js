@@ -1,5 +1,5 @@
 const User = require('../models/user');
-const Group = require('../models/group');
+const Group = require('../models/Group');
 
 // ✅ Get all users (for admin)
 exports.getAllUsers = async (req, res) => {
@@ -36,5 +36,14 @@ exports.deleteUser = async (req, res) => {
   } catch (err) {
     console.error('Delete user error:', err.message);
     res.status(500).json({ error: 'Failed to delete user' });
+  }
+};
+
+exports.getAllGroups = async (req, res) => {
+  try {
+    const groups = await Group.find().populate('creator', 'name email');
+    res.json(groups); // or res.json({ groups });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to load group data' });
   }
 };
