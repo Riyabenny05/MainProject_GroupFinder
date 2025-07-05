@@ -2,10 +2,10 @@
 const express = require('express');
 const router = express.Router();
 const Group = require('../models/Group');
-
 const {
   getAllUsers,
   deleteUser,
+  getAllGroups, // ✅ New controller
 } = require('../controlers/adminController');
 
 const authMiddleware = require('../middleware/authMiddleware');
@@ -14,6 +14,9 @@ const roleMiddleware = require('../middleware/roleMiddleware');
 // ✅ Admin-only protected routes
 router.get('/users', authMiddleware, roleMiddleware('admin'), getAllUsers);
 router.delete('/users/:id', authMiddleware, roleMiddleware('admin'), deleteUser);
+
+// ✅ ✅ ✅ Admin Dashboard: Fetch all groups (for /api/admin/groups)
+router.get('/groups', authMiddleware, roleMiddleware('admin'), getAllGroups);
 
 // ✅ Approve a group
 router.patch('/groups/:id/approve', authMiddleware, roleMiddleware('admin'), async (req, res) => {
