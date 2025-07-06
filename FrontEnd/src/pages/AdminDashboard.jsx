@@ -89,22 +89,18 @@ const AdminDashboard = () => {
       alert("Rejection failed");
     }
   };
+  const handleViewGroup = (group) => {
+  navigate(`/group/${group._id}`, {
+    state: {
+      title: group.title,
+      subject: group.subject,
+      description: group.description,
+      groupId: group._id,
+    },
+  });
+};
 
-  const handleDelete = async (id) => {
-    try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`/groups/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setGroups(prev => prev.filter(g => g._id !== id));
-    } catch (err) {
-      alert("Failed to delete group");
-    }
-  };
-  
-  const handleViewGroup = (id) => {
-    navigate(`/group/${id}`);
-  };
+
 
   const handleManageUser = (id) => {
     navigate(`/admin/users/${id}`);
@@ -255,16 +251,17 @@ const AdminDashboard = () => {
                     <TableCell align="center">
                       <Grid container spacing={1} justifyContent="center">
                         <Grid item>
-                          <Button size="small" variant="contained" sx={{ backgroundColor: '#1E3A8A', color: 'white' }} onClick={() => handleViewGroup(group._id)}>View</Button>
+                          <Button size="small" variant="contained" 
+                          sx={{ backgroundColor: '#1E3A8A', color: 'white' }} 
+                          onClick={() => handleViewGroup(group)}>
+                          View
+                        </Button>
                         </Grid>
                         <Grid item>
                           <Button size="small" variant="contained" sx={{ backgroundColor: '#14532D', color: 'white' }} onClick={() => handleApprove(group._id)} disabled={group.approved}>Approve</Button>
                         </Grid>
                         <Grid item>
                           <Button size="small" variant="contained" sx={{ backgroundColor: 'orange', color: 'white' }} onClick={() => handleReject(group._id)} disabled={group.rejected}>Reject</Button>
-                        </Grid>
-                        <Grid item>
-                          <Button size="small" variant="contained" sx={{ backgroundColor: '#7F1D1D', color: 'white' }} onClick={() => handleDelete(group._id)}>Delete</Button>
                         </Grid>
                       </Grid>
                     </TableCell>
@@ -299,7 +296,6 @@ const AdminDashboard = () => {
           <TableRow>
             <TableCell sx={{ color: 'white' }}>Name</TableCell>
             <TableCell sx={{ color: 'white' }}>Email</TableCell>
-            <TableCell sx={{ color: 'white' }}>Registered At</TableCell>
             <TableCell align="center" sx={{ color: 'white' }}>Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -308,7 +304,6 @@ const AdminDashboard = () => {
             <TableRow key={user._id}>
               <TableCell sx={{ color: 'white' }}>{user.name}</TableCell>
               <TableCell sx={{ color: 'white' }}>{user.email}</TableCell>
-              <TableCell sx={{ color: 'white' }}>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
               <TableCell align="center">
                 <Button
                   size="small"
