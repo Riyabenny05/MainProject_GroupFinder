@@ -56,7 +56,6 @@ const AdminDashboard = () => {
         setGroups(groupRes.data);
         setUsers(userRes.data);
       } catch (err) {
-        console.error('Failed to fetch admin data:', err);
         setError('Failed to load dashboard data. Please try again.');
       } finally {
         setLoading(false);
@@ -89,23 +88,21 @@ const AdminDashboard = () => {
       alert("Rejection failed");
     }
   };
+
   const handleViewGroup = (group) => {
-  navigate(`/group/${group._id}`, {
-    state: {
-      title: group.title,
-      subject: group.subject,
-      description: group.description,
-      groupId: group._id,
-    },
-  });
-};
-
-
+    navigate(`/group/${group._id}`, {
+      state: {
+        title: group.title,
+        subject: group.subject,
+        description: group.description,
+        groupId: group._id,
+      },
+    });
+  };
 
   const handleManageUser = (id) => {
     navigate(`/admin/users/${id}`);
   };
-  
 
   let filteredGroups = groups.filter(group =>
     group.title?.toLowerCase().includes(groupSearch.toLowerCase())
@@ -127,7 +124,7 @@ const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <Box sx={{ p: isMobile ? 2 : 4, textAlign: 'center', color: 'white' }}>
+      <Box sx={{ p: 4, textAlign: 'center', color: 'white' }}>
         <CircularProgress sx={{ mb: 2 }} />
         <Typography variant="h6">Loading Admin Data...</Typography>
       </Box>
@@ -136,7 +133,7 @@ const AdminDashboard = () => {
 
   if (error) {
     return (
-      <Box sx={{ p: isMobile ? 2 : 4, textAlign: 'center', color: 'white' }}>
+      <Box sx={{ p: 4, textAlign: 'center', color: 'white' }}>
         <Alert severity="error">{error}</Alert>
         <Button variant="contained" onClick={() => window.location.reload()} sx={{ mt: 2 }}>
           Retry
@@ -154,28 +151,33 @@ const AdminDashboard = () => {
         right: 0,
         bottom: 0,
         overflowY: 'auto',
-        background: 'linear-gradient(to bottom right, #1a1a2e, #2a003f)',
+        px: isMobile ? 2 : 4,
+        pt: 10,
+        pb: 6,
         color: 'white',
-        boxSizing: 'border-box',
-        padding: '80px 24px 48px'
+        background: 'radial-gradient(circle at top left, #36013F, #0f0f1a, #100020, #080014)',
+        backgroundAttachment: 'fixed',
+        backgroundSize: 'cover',
       }}
     >
       <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>🛠 Admin Dashboard</Typography>
 
-      <Grid container spacing={2} justifyContent="space-between" alignItems="stretch" sx={{ mb: 4 }}>
-        {[{
-          label: 'Total Groups', value: groups.length, icon: '👥'
-        }, {
-          label: 'Approved Groups', value: groups.filter(g => g.approved).length, icon: '✅'
-        }, {
-          label: 'Pending Groups', value: groups.filter(g => !g.approved && !g.rejected).length, icon: '⏳'
-        }, {
-          label: 'Registered Users', value: users.length, icon: '📋'
-        }].map((item, index) => (
+      <Grid container spacing={2} justifyContent="space-between" alignItems="stretch" sx={{ color: 'white', mb: 4 }}>
+        {[
+          { label: 'Total Groups', value: groups.length, icon: '👥'  },
+          { label: 'Approved Groups', value: groups.filter(g => g.approved).length, icon: '✅' },
+          { label: 'Pending Groups', value: groups.filter(g => !g.approved && !g.rejected).length, icon: '⏳' },
+          { label: 'Registered Users', value: users.length, icon: '📋' }
+        ].map((item, index) => (
           <Grid item xs={12} sm={6} md={3} key={index}>
-            <Card elevation={6} sx={{ height: '100%', backgroundColor: '#2e2e48', color: 'white', borderRadius: 3 }}>
+            <Card sx={{
+              background: 'rgba(193, 193, 197, 0.6)',
+              borderRadius: 3,
+              backdropFilter: 'blur(8px)',
+              boxShadow: '0 4px 20px rgba(250, 5, 217, 0.5)'
+            }}>
               <CardContent>
-                <Typography variant="subtitle2" sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: '0.95rem', fontWeight: 600 }}>{item.icon} {item.label}</Typography>
+                <Typography variant="subtitle2" sx={{ fontSize: '1rem', fontWeight: 600 }}>{item.icon} {item.label}</Typography>
                 <Typography variant="h4" sx={{ mt: 1 }}>{item.value}</Typography>
               </CardContent>
             </Card>
@@ -184,52 +186,54 @@ const AdminDashboard = () => {
       </Grid>
 
       <Divider sx={{ mb: 3, borderColor: '#555' }} />
-      <Box
-  sx={{
-    display: 'flex',
-    flexDirection: isMobile ? 'column' : 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: 2,
-    mb: 3,
-  }}
->
-  <TextField
-    variant="outlined"
-    size="small"
-    label="Search Groups"
-    value={groupSearch}
-    onChange={(e) => setGroupSearch(e.target.value)}
-    InputProps={{
-      style: { color: 'white', backgroundColor: '#3a3a5a' },
-    }}
-    InputLabelProps={{ style: { color: '#aaa' } }}
-  />
 
-  <FormControl size="small" sx={{ minWidth: 160 }}>
-    <InputLabel sx={{ color: '#aaa' }}>Sort By</InputLabel>
-    <Select
-      value={sortOption}
-      onChange={(e) => setSortOption(e.target.value)}
-      label="Sort By"
-      sx={{
-        color: 'white',
-        backgroundColor: '#3a3a5a',
-        '& .MuiSvgIcon-root': { color: 'white' },
-      }}
-    >
-      <MenuItem value="">None</MenuItem>
-      <MenuItem value="newest">Newest</MenuItem>
-      <MenuItem value="oldest">Oldest</MenuItem>
-      <MenuItem value="approved">Approved</MenuItem>
-      <MenuItem value="pending">Pending</MenuItem>
-    </Select>
-  </FormControl>
-</Box>
+      {/* Search and Sort */}
+      <Box sx={{
+        display: 'flex',
+        flexDirection: isMobile ? 'column' : 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: 2,
+        mb: 3,
+      }}>
+        <TextField
+          variant="outlined"
+          size="small"
+          label="Search Groups"
+          value={groupSearch}
+          onChange={(e) => setGroupSearch(e.target.value)}
+          InputProps={{
+            style: { color: 'white', backgroundColor: '#333', borderRadius: 8 },
+          }}
+          InputLabelProps={{ style: { color: '#aaa' } }}
+        />
 
-      <Card sx={{ backgroundColor: '#2e2e48', color: 'white', mb: 5 }}>
+        <FormControl size="small" sx={{ minWidth: 160 }}>
+          <InputLabel sx={{ color: ' lightyellow' }}>Sort By</InputLabel>
+          <Select
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value)}
+            label="Sort By"
+            sx={{
+              color: 'white',
+              backgroundColor: '#333',
+              borderRadius: 8,
+              '& .MuiSvgIcon-root': { color: 'white' },
+            }}
+          >
+            <MenuItem value="">None</MenuItem>
+            <MenuItem value="newest">Newest</MenuItem>
+            <MenuItem value="oldest">Oldest</MenuItem>
+            <MenuItem value="approved">Approved</MenuItem>
+            <MenuItem value="pending">Pending</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+
+      {/* Groups Table */}
+      <Card sx={{ backgroundColor: '#1f1f2e', borderRadius: 3, mb: 5 }}>
         <CardContent>
-          <Typography variant="h6" gutterBottom>📘 Study Group Management</Typography>
+          <Typography variant="h6" gutterBottom color='white'>📘 Study Group Management</Typography>
           <TableContainer component={Paper} sx={{ backgroundColor: 'transparent' }}>
             <Table size="small">
               <TableHead>
@@ -245,23 +249,22 @@ const AdminDashboard = () => {
                   <TableRow key={group._id}>
                     <TableCell sx={{ color: 'white' }}>{group.title}</TableCell>
                     <TableCell sx={{ color: 'white' }}>{group.members.length}</TableCell>
-                    <TableCell sx={{ color: group.approved ? '#00e676' : group.rejected ? 'red' : '#ffb74d', fontWeight: 600 }}>
+                    <TableCell sx={{
+                      color: group.approved ? '#00e676' : group.rejected ? '#ff5252' : '#ffb74d',
+                      fontWeight: 600
+                    }}>
                       {group.approved ? 'Approved' : group.rejected ? 'Rejected' : 'Pending'}
                     </TableCell>
                     <TableCell align="center">
                       <Grid container spacing={1} justifyContent="center">
                         <Grid item>
-                          <Button size="small" variant="contained" 
-                          sx={{ backgroundColor: '#1E3A8A', color: 'white' }} 
-                          onClick={() => handleViewGroup(group)}>
-                          View
-                        </Button>
+                          <Button size="small" variant="contained" sx={{ backgroundColor: '#4b0082' }} onClick={() => handleViewGroup(group)}>View</Button>
                         </Grid>
                         <Grid item>
-                          <Button size="small" variant="contained" sx={{ backgroundColor: '#14532D', color: 'white' }} onClick={() => handleApprove(group._id)} disabled={group.approved}>Approve</Button>
+                          <Button size="small" variant="contained" sx={{ backgroundColor: '#2e7d32' }} onClick={() => handleApprove(group._id)} disabled={group.approved}>Approve</Button>
                         </Grid>
                         <Grid item>
-                          <Button size="small" variant="contained" sx={{ backgroundColor: 'orange', color: 'white' }} onClick={() => handleReject(group._id)} disabled={group.rejected}>Reject</Button>
+                          <Button size="small" variant="contained" sx={{ backgroundColor: '#d84315' }} onClick={() => handleReject(group._id)} disabled={group.rejected}>Reject</Button>
                         </Grid>
                       </Grid>
                     </TableCell>
@@ -272,56 +275,48 @@ const AdminDashboard = () => {
           </TableContainer>
         </CardContent>
       </Card>
-      <Card sx={{ backgroundColor: '#2e2e48', color: 'white', mb: 5 }}>
-  <CardContent>
-    <Typography variant="h6" gutterBottom>👥 Registered Users</Typography>
 
-    {/* Optional: User Search Input */}
-    <TextField
-      variant="outlined"
-      size="small"
-      label="Search Users"
-      value={userSearch}
-      onChange={(e) => setUserSearch(e.target.value)}
-      InputProps={{
-        style: { color: 'white', backgroundColor: '#3a3a5a' },
-      }}
-      InputLabelProps={{ style: { color: '#aaa' } }}
-      sx={{ mb: 2 }}
-    />
+      {/* Users Table */}
+      <Card sx={{ backgroundColor: '#1f1f2e', borderRadius: 3 }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom color='white'>👥 Registered Users</Typography>
+          <TextField
+            variant="outlined"
+            size="small"
+            label="Search Users"
+            value={userSearch}
+            onChange={(e) => setUserSearch(e.target.value)}
+            InputProps={{
+              style: { color: 'white', backgroundColor: '#333', borderRadius: 8 },
+            }}
+            InputLabelProps={{ style: { color: '#aaa' } }}
+            sx={{ mb: 2 }}
+          />
 
-    <TableContainer component={Paper} sx={{ backgroundColor: 'transparent' }}>
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell sx={{ color: 'white' }}>Name</TableCell>
-            <TableCell sx={{ color: 'white' }}>Email</TableCell>
-            <TableCell align="center" sx={{ color: 'white' }}>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {filteredUsers.map((user) => (
-            <TableRow key={user._id}>
-              <TableCell sx={{ color: 'white' }}>{user.name}</TableCell>
-              <TableCell sx={{ color: 'white' }}>{user.email}</TableCell>
-              <TableCell align="center">
-                <Button
-                  size="small"
-                  variant="contained"
-                  sx={{ backgroundColor: '#7C5B82', color: 'white' }}
-                  onClick={() => handleManageUser(user._id)}
-                >
-                  Manage
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  </CardContent>
-</Card>
-
+          <TableContainer component={Paper} sx={{ backgroundColor: 'transparent' }}>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ color: 'white' }}>Name</TableCell>
+                  <TableCell sx={{ color: 'white' }}>Email</TableCell>
+                  <TableCell align="center" sx={{ color: 'white' }}>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredUsers.map(user => (
+                  <TableRow key={user._id}>
+                    <TableCell sx={{ color: 'white' }}>{user.name}</TableCell>
+                    <TableCell sx={{ color: 'white' }}>{user.email}</TableCell>
+                    <TableCell align="center">
+                      <Button size="small" variant="contained" sx={{ backgroundColor: '#7c4dff' }} onClick={() => handleManageUser(user._id)}>Manage</Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </CardContent>
+      </Card>
     </Box>
   );
 };
