@@ -4,29 +4,54 @@ import {
   TextField,
   Button,
   Typography,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   useMediaQuery,
   useTheme,
   Paper,
   Link as MuiLink,
 } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('user');
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    alert(`Login clicked for ${role} - Email: ${email}`);
-    // Place axios login logic here
+
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        // ✅ Save token and user
+        login(data.user, data.token);
+
+        // ✅ Navigate based on role
+        if (data.user.role === 'admin') {
+          navigate('/admin-dashboard');
+        } else {
+          navigate('/home');
+        }
+      } else {
+        alert(data.error || 'Login failed');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      alert('Login failed due to network or server error');
+    }
   };
 
   return (
@@ -58,8 +83,6 @@ const Login = () => {
             fullWidth
             margin="normal"
             type="email"
-            name="email"
-            autoComplete="off"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -70,25 +93,10 @@ const Login = () => {
             fullWidth
             margin="normal"
             type="password"
-            name="password"
-            autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-
-          <FormControl fullWidth margin="normal">
-            <InputLabel>Role</InputLabel>
-            <Select
-              value={role}
-              label="Role"
-              onChange={(e) => setRole(e.target.value)}
-            >
-              <MenuItem value="user">User</MenuItem>
-              <MenuItem value="admin">Admin</MenuItem>
-            </Select>
-          </FormControl>
-
           <Button
             fullWidth
             type="submit"
@@ -100,7 +108,6 @@ const Login = () => {
           </Button>
         </form>
 
-        {/* Link to Sign Up */}
         <Typography variant="body2" textAlign="center" sx={{ mt: 2 }}>
           Don't have an account?{' '}
           <MuiLink component={RouterLink} to="/signup" underline="hover">

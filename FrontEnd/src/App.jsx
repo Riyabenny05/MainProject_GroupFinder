@@ -1,26 +1,60 @@
-// App.jsx
-import React from 'react';
-import Navbar from './components/Navbar';
-import Login from './pages/Login';
-import SignUp from './pages/SignUp';
-import GroupCard from './components/GroupCard';
-import Home from './pages/Home';
-import GroupDetails from './pages/GroupDetails';
-import { Routes, Route } from 'react-router-dom';
-import './App.css';
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import { CssBaseline } from '@mui/material';
+import Navbar from "./components/Navbar";
+import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
+import Splash from './pages/Splash'; 
+import Home from "./pages/Home";
+import GroupCard from "./components/GroupCard";
+import GroupDetails from "./pages/GroupDetails";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminRoute from './routes/AdminRoute';
+import UserRoute from './routes/UserRoute';
+import ProtectedRoute from './components/ProtectedRoute';
+import { AuthProvider } from './context/AuthContext';
+import Box from '@mui/material/Box';
+
+// 🔴 Make sure these are created and exported properly
+import UserManage from './pages/UserManage'; 
+import Unauthorized from './pages/Unauthorized';
 
 function App() {
   return (
-    <div>
+    <AuthProvider>
       <Navbar />
+      <Box sx={{ pt: '64px' }}>
       <Routes>
-        <Route path="/" element={<Home />} />
+        {/* Public Routes */}
+        <Route path="/" element={<Splash />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/groupcard" element={<GroupCard />} />
         <Route path="/group/:id" element={<GroupDetails />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
+       
+        {/* Admin Protected Routes */}
+        <Route
+          path="/admin-dashboard"
+          element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/users/:id"
+          element={
+            <AdminRoute>
+              <UserManage />
+            </AdminRoute>
+          }
+        />
+
       </Routes>
-    </div>
+      </Box>
+    </AuthProvider>
   );
 }
 

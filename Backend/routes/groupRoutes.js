@@ -1,33 +1,25 @@
+// routes/groupRoutes.js
 const express = require('express');
 const router = express.Router();
-const Group = require('../models/Group');
+const groupController = require('../controlers/groupController');
+const authMiddleware = require('../middleware/authMiddleware');
 
-// GET all groups
-router.get('/', async (req, res) => {
-  try {
-    const groups = await Group.find();
-    res.json(groups);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+const {
+  createGroup,
+  getAllGroups,
+  joinGroup,
+  leaveGroup,
+  deleteGroup,
+  getGroupById, 
+} = require('../controlers/groupController'); 
+// Apply middleware here 👇
+router.post('/', authMiddleware, groupController.createGroup);
 
-// POST new group
-router.post('/', async (req, res) => {
-  const { title, subject, description } = req.body;
-
-  const newGroup = new Group({
-    title,
-    subject,
-    description,
-  });
-
-  try {
-    const savedGroup = await newGroup.save();
-    res.status(201).json(savedGroup);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
+// Other routes...
+router.get('/', groupController.getGroups);
+router.post('/:id/join', authMiddleware, groupController.joinGroup);
+router.post('/:id/leave', authMiddleware, groupController.leaveGroup);
+router.get('/:id', getGroupById);
+router.delete('/:id', authMiddleware, groupController.deleteGroup);
 
 module.exports = router;
