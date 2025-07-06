@@ -101,7 +101,7 @@ const AdminDashboard = () => {
       alert("Failed to delete group");
     }
   };
-
+  
   const handleViewGroup = (id) => {
     navigate(`/group/${id}`);
   };
@@ -109,6 +109,7 @@ const AdminDashboard = () => {
   const handleManageUser = (id) => {
     navigate(`/admin/users/${id}`);
   };
+  
 
   let filteredGroups = groups.filter(group =>
     group.title?.toLowerCase().includes(groupSearch.toLowerCase())
@@ -187,6 +188,48 @@ const AdminDashboard = () => {
       </Grid>
 
       <Divider sx={{ mb: 3, borderColor: '#555' }} />
+      <Box
+  sx={{
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 2,
+    mb: 3,
+  }}
+>
+  <TextField
+    variant="outlined"
+    size="small"
+    label="Search Groups"
+    value={groupSearch}
+    onChange={(e) => setGroupSearch(e.target.value)}
+    InputProps={{
+      style: { color: 'white', backgroundColor: '#3a3a5a' },
+    }}
+    InputLabelProps={{ style: { color: '#aaa' } }}
+  />
+
+  <FormControl size="small" sx={{ minWidth: 160 }}>
+    <InputLabel sx={{ color: '#aaa' }}>Sort By</InputLabel>
+    <Select
+      value={sortOption}
+      onChange={(e) => setSortOption(e.target.value)}
+      label="Sort By"
+      sx={{
+        color: 'white',
+        backgroundColor: '#3a3a5a',
+        '& .MuiSvgIcon-root': { color: 'white' },
+      }}
+    >
+      <MenuItem value="">None</MenuItem>
+      <MenuItem value="newest">Newest</MenuItem>
+      <MenuItem value="oldest">Oldest</MenuItem>
+      <MenuItem value="approved">Approved</MenuItem>
+      <MenuItem value="pending">Pending</MenuItem>
+    </Select>
+  </FormControl>
+</Box>
 
       <Card sx={{ backgroundColor: '#2e2e48', color: 'white', mb: 5 }}>
         <CardContent>
@@ -232,6 +275,58 @@ const AdminDashboard = () => {
           </TableContainer>
         </CardContent>
       </Card>
+      <Card sx={{ backgroundColor: '#2e2e48', color: 'white', mb: 5 }}>
+  <CardContent>
+    <Typography variant="h6" gutterBottom>👥 Registered Users</Typography>
+
+    {/* Optional: User Search Input */}
+    <TextField
+      variant="outlined"
+      size="small"
+      label="Search Users"
+      value={userSearch}
+      onChange={(e) => setUserSearch(e.target.value)}
+      InputProps={{
+        style: { color: 'white', backgroundColor: '#3a3a5a' },
+      }}
+      InputLabelProps={{ style: { color: '#aaa' } }}
+      sx={{ mb: 2 }}
+    />
+
+    <TableContainer component={Paper} sx={{ backgroundColor: 'transparent' }}>
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell sx={{ color: 'white' }}>Name</TableCell>
+            <TableCell sx={{ color: 'white' }}>Email</TableCell>
+            <TableCell sx={{ color: 'white' }}>Registered At</TableCell>
+            <TableCell align="center" sx={{ color: 'white' }}>Actions</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {filteredUsers.map((user) => (
+            <TableRow key={user._id}>
+              <TableCell sx={{ color: 'white' }}>{user.name}</TableCell>
+              <TableCell sx={{ color: 'white' }}>{user.email}</TableCell>
+              <TableCell sx={{ color: 'white' }}>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
+              <TableCell align="center">
+                <Button
+                  size="small"
+                  variant="contained"
+                  sx={{ backgroundColor: '#7C5B82', color: 'white' }}
+                  onClick={() => handleManageUser(user._id)}
+                >
+                  Manage
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  </CardContent>
+</Card>
+
     </Box>
   );
 };
