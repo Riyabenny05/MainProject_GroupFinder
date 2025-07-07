@@ -10,4 +10,7 @@ const groupSchema = new mongoose.Schema({
   rejected: { type: Boolean, default: false },
 }, { timestamps: true });
 
+
 module.exports = mongoose.models.Group || mongoose.model('Group', groupSchema);
+module.exports = mongoose.models.Group || mongoose.model('Group', groupSchema);
+

@@ -22,4 +22,7 @@ router.post('/:id/leave', authMiddleware, groupController.leaveGroup);
 router.get('/:id', getGroupById);
 router.delete('/:id', authMiddleware, groupController.deleteGroup);
 
+
 module.exports = router;
+module.exports = router;
+

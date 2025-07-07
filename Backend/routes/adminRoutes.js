@@ -52,4 +52,8 @@ router.patch('/groups/:id/reject', authMiddleware, roleMiddleware('admin'), asyn
   }
 });
 
+
 module.exports = router;
+
+module.exports = router;
+
