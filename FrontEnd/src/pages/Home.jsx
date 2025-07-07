@@ -20,6 +20,7 @@ import StudyGroupCard from "../components/GroupCard";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import splashVideo from "../assets/Animated_grid.mp4";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import axios from "../utils/axios";
 
 const dummyGroups = [
@@ -117,6 +118,10 @@ const Home = () => {
     navigate("/group-details", { state: group });
   };
 
+  const handleProfile = () => {
+    navigate("/profile", { state: user });
+  };
+
   useEffect(() => {
     const fetchGroups = async () => {
       try {
@@ -178,6 +183,7 @@ setGroups([...res.data.filter(g => g.approved), ...dummyGroups]);
         </AppBar>
 
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+          <MenuItem onClick={handleProfile}>< AccountCircleIcon sx={{ mr: 1 }} /> Profile</MenuItem>
           <MenuItem onClick={() => setOpenCreateModal(true)}><AddCircleOutlineIcon sx={{ mr: 1 }} /> Create Group</MenuItem>
           <MenuItem onClick={handleMenuClose}><NotificationsOffIcon sx={{ mr: 1 }} /> Mute Notifications</MenuItem>
           <MenuItem onClick={handleLogout}><LogoutIcon sx={{ mr: 1 }} /> Logout</MenuItem>
