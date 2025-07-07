@@ -23,6 +23,7 @@ import Unauthorized from './pages/Unauthorized';
 function App() {
   return (
     <AuthProvider>
+      <CssBaseline />
       <Navbar />
       <Box sx={{ pt: '64px' }}>
       <Routes>
