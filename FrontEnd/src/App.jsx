@@ -14,14 +14,16 @@ import UserRoute from './routes/UserRoute';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 import Box from '@mui/material/Box';
-
+import Profile from './pages/Profile'; 
 // 🔴 Make sure these are created and exported properly
 import UserManage from './pages/UserManage'; 
 import Unauthorized from './pages/Unauthorized';
 
+
 function App() {
   return (
     <AuthProvider>
+      <CssBaseline />
       <Navbar />
       <Box sx={{ pt: '64px' }}>
       <Routes>
@@ -33,7 +35,8 @@ function App() {
         <Route path="/groupcard" element={<GroupCard />} />
         <Route path="/group/:id" element={<GroupDetails />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
-       
+       <Route path="/profile" element={<Profile />} />
+
         {/* Admin Protected Routes */}
         <Route
           path="/admin-dashboard"
