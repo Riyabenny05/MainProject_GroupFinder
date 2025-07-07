@@ -7,7 +7,7 @@ const authRoutes = require('./routes/authRoutes');
 const groupRoutes = require('./routes/groupRoutes');
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
-
+const messageRoutes = require('./routes/messageRoutes');
 const app = express();
 const PORT = 5000;
 
@@ -19,6 +19,7 @@ app.use(cors({
 
 app.use(express.json());
 
+app.use('/api/messages', messageRoutes);
 // ✅ Register routes with correct base paths
 app.use('/api/auth', authRoutes);
 app.use('/api/groups', groupRoutes);

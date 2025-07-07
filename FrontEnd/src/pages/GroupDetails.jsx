@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
   Box,
   Typography,
@@ -23,17 +24,13 @@ const GroupDetails = () => {
   const { state } = location || {};
   const { title, subject, description, groupId } = state || {};
 
-  const [messages, setMessages] = useState([
-    { text: 'Welcome to the group!', sender: 'Admin' },
-    { text: "Let's start learning React!", sender: 'Riya Benny' },
-  ]);
+  const [messages, setMessages] = useState([]);
   const [newMsg, setNewMsg] = useState('');
-  const [materials, setMaterials] = useState([
-    { link: 'https://reactjs.org', uploader: 'Admin' },
-  ]);
+  const [materials, setMaterials] = useState([]);
   const [newMaterial, setNewMaterial] = useState('');
   const [members] = useState(['Riya Benny', 'Dayona', 'Jofia', 'Karthik']);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedMsgId, setSelectedMsgId] = useState(null);
 
   const handleSettingsClick = (event) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
@@ -46,16 +43,57 @@ const GroupDetails = () => {
     }
   };
 
-  const handleSendMessage = () => {
-    if (newMsg.trim() === '') return;
-    setMessages([...messages, { text: newMsg, sender: 'You' }]);
-    setNewMsg('');
+  const fetchMessages = async () => {
+    try {
+      const res = await axios.get(`/api/messages/${groupId}`);
+      setMessages(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error('Error loading messages:', err);
+      setMessages([]);
+    }
   };
 
-  const handleAddMaterial = () => {
-    if (newMaterial.trim() === '') return;
-    setMaterials([...materials, { link: newMaterial, uploader: 'You' }]);
-    setNewMaterial('');
+  useEffect(() => {
+    if (groupId) fetchMessages();
+  }, [groupId]);
+
+  const handleSendMessage = async () => {
+    if (newMsg.trim() === '') return;
+    try {
+      await axios.post('/api/messages', {
+        groupId,
+        content: newMsg,
+        type: 'text',
+      });
+      setNewMsg('');
+      fetchMessages();
+    } catch (err) {
+      console.error('Send error:', err);
+    }
+  };
+
+  const handleDoubleClick = (id) => {
+    setSelectedMsgId(id);
+  };
+
+  const deleteForMe = async () => {
+    try {
+      await axios.patch(`/api/messages/${selectedMsgId}/delete-for-me`);
+      fetchMessages();
+      setSelectedMsgId(null);
+    } catch (err) {
+      console.error('Delete-for-me error:', err);
+    }
+  };
+
+  const deleteForEveryone = async () => {
+    try {
+      await axios.delete(`/api/messages/${selectedMsgId}`);
+      fetchMessages();
+      setSelectedMsgId(null);
+    } catch (err) {
+      console.error('Delete-for-everyone error:', err);
+    }
   };
 
   if (!title) {
@@ -103,11 +141,20 @@ const GroupDetails = () => {
 
         <Typography variant="h6">💬 Group Messages</Typography>
         <Box sx={{ maxWidth: 600, mt: 2 }}>
-          {messages.map((msg, idx) => (
-            <Typography key={idx} sx={{ mb: 1 }}>
-              <strong>{msg.sender}:</strong> {msg.text}
+          {Array.isArray(messages) && messages.map((msg, idx) => (
+            <Typography
+              key={msg._id || idx}
+              onDoubleClick={() => handleDoubleClick(msg._id)}
+              sx={{ mb: 1, cursor: 'pointer' }}>
+              <strong>{msg.sender?.name || 'Unknown'}:</strong> {msg.content}
             </Typography>
           ))}
+          {selectedMsgId && (
+            <Box sx={{ mt: 2 }}>
+              <Button onClick={deleteForMe} variant="outlined" sx={{ mr: 2 }}>Delete for Me</Button>
+              <Button onClick={deleteForEveryone} variant="outlined" color="error">Delete for Everyone</Button>
+            </Box>
+          )}
           <TextField
             variant="outlined"
             size="small"
@@ -140,7 +187,7 @@ const GroupDetails = () => {
             onChange={(e) => setNewMaterial(e.target.value)}
             sx={{ mt: 2, backgroundColor: 'white', borderRadius: 1 }}
           />
-          <Button onClick={handleAddMaterial} sx={{ mt: 1 }} variant="contained">Add Material</Button>
+          <Button onClick={() => setMaterials([...materials, { link: newMaterial, uploader: 'You' }])} sx={{ mt: 1 }} variant="contained">Add Material</Button>
         </Box>
       </Box>
     </Box>
