@@ -31,13 +31,21 @@ exports.approveGroup = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const userId = req.params.id;
-    await User.findByIdAndDelete(userId);
+    const deletedUser = await User.findByIdAndDelete(userId);
+
+    if (deletedUser) {
+      console.log(`✅ Deleted user: ${deletedUser.name} (${deletedUser.email})`);
+    } else {
+      console.log(`⚠️ No user found with ID: ${userId}`);
+    }
+
     res.json({ message: 'User deleted successfully' });
   } catch (err) {
-    console.error('Delete user error:', err.message);
+    console.error('❌ Delete user error:', err.message);
     res.status(500).json({ error: 'Failed to delete user' });
   }
 };
+
 
 exports.getAllGroups = async (req, res) => {
   try {

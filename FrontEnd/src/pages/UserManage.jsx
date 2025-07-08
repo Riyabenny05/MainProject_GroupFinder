@@ -9,7 +9,7 @@ import {
   CardContent,
   Alert
 } from '@mui/material';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from '../utils/axios';
 
 const UserManage = () => {
@@ -19,6 +19,7 @@ const UserManage = () => {
   const [message, setMessage] = useState('');
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -71,6 +72,24 @@ const UserManage = () => {
       setError('Failed to send notification');
     }
   };
+  
+  const handleDelete = async () => {
+  if (!window.confirm("Are you sure you want to delete this user?")) return;
+
+  try {
+    const token = localStorage.getItem('token');
+    await axios.delete(`/admin/users/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setSuccess('🗑️ User deleted successfully');
+    setTimeout(() => {
+      navigate('/admin-dashboard');
+ // or navigate using useNavigate
+    }, 2000);
+  } catch (err) {
+    setError('Failed to delete user');
+  }
+};
 
   if (!user && !error) {
     return <Typography sx={{ p: 4, color: 'white' }}>Loading...</Typography>;
@@ -172,6 +191,30 @@ const UserManage = () => {
             </CardContent>
           </Card>
         </Grid>
+        <Grid item>
+  <Card
+    elevation={6}
+    sx={{
+      backgroundColor: '#2e2e48',
+      color: 'white',
+      borderRadius: 3,
+      boxShadow: '0 2px 12px rgba(0,0,0,0.3)',
+      paddingBottom: 2,
+    }}
+  >
+    <CardContent>
+      <Typography variant="h6" gutterBottom>🗑️ Danger Zone</Typography>
+      <Button
+        variant="contained"
+        color="error"
+        onClick={handleDelete}
+      >
+        Delete User
+      </Button>
+    </CardContent>
+  </Card>
+</Grid>
+
       </Grid>
     </Box>
   );

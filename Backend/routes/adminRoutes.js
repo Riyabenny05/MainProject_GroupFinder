@@ -2,6 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const Group = require('../models/Group');
+const User = require('../models/User');
+
 const {
   getAllUsers,
   deleteUser,
@@ -17,6 +19,7 @@ router.delete('/users/:id', authMiddleware, roleMiddleware('admin'), deleteUser)
 
 // ✅ ✅ ✅ Admin Dashboard: Fetch all groups (for /api/admin/groups)
 router.get('/groups', authMiddleware, roleMiddleware('admin'), getAllGroups);
+
 
 // ✅ Approve a group
 router.patch('/groups/:id/approve', authMiddleware, roleMiddleware('admin'), async (req, res) => {
