@@ -16,7 +16,7 @@ const notificationRoutes = require('./routes/notifications');
 const app = express();
 const PORT = 5000;
 
-// ✅ Allow requests from frontend (Vite - 5173)
+//  Allow requests from frontend (Vite - 5173)
 app.use(cors({
   origin: 'http://localhost:5173',
   credentials: true

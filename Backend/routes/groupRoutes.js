@@ -15,7 +15,7 @@ const {
 // Apply middleware here 👇
 router.post('/', authMiddleware, groupController.createGroup);
 
-// Other routes...
+// Other routes..
 router.get('/', groupController.getGroups);
 router.post('/:id/join', authMiddleware, groupController.joinGroup);
 router.post('/:id/leave', authMiddleware, groupController.leaveGroup);

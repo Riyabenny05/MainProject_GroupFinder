@@ -3,7 +3,7 @@ const router = express.Router();
 const Message = require('../models/Message');
 const auth = require('../middleware/authMiddleware');
 
-// ✅ Get all messages in a group
+// Get all messages in a group
 router.get('/:groupId', auth, async (req, res) => {
   const { groupId } = req.params;
   try {
@@ -19,7 +19,7 @@ router.get('/:groupId', auth, async (req, res) => {
   }
 });
 
-// ✅ Send a message
+// Send a message
 router.post('/', auth, async (req, res) => {
   const { groupId, content, type } = req.body;
   if (!groupId || !content) {

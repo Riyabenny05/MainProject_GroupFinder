@@ -27,7 +27,7 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// ✅ GET: Fetch all materials for a group
+//  GET: Fetch all materials for a group
 router.get('/:groupId', auth, async (req, res) => {
   try {
     const materials = await Material.find({ groupId: req.params.groupId }).populate('uploaderId', 'name');
