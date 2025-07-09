@@ -126,7 +126,7 @@ const GroupDetails = () => {
   if (!title) {
     return (
       <Box sx={{ color: 'white', backgroundColor: 'black', minHeight: '100vh', p: 4 }}>
-        <Typography variant="h6">No group data available. Please try again.</Typography>
+        <Typography variant="h6">No group data available! Please try again.</Typography>
       </Box>
     );
   }

@@ -3,7 +3,7 @@ const User = require('../models/user');
 
 
 
-// ✅ Create a new group
+//  Create a new group
 exports.createGroup = async (req, res) => {
   try {
     const { title, subject, description } = req.body;
