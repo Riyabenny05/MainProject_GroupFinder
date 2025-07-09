@@ -2,7 +2,9 @@
 const express = require('express');
 const router = express.Router();
 const Group = require('../models/Group');
+
 const User = require('../models/User');
+
 
 const {
   getAllUsers,
@@ -57,6 +59,9 @@ router.patch('/groups/:id/reject', authMiddleware, roleMiddleware('admin'), asyn
 
 
 module.exports = router;
+
+module.exports = router;
+
 
 module.exports = router;
 

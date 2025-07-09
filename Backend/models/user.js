@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
   password: String,
   role: { type: String, default: 'user' },
   groups: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }],
+
   //newedit-->
   avatar: {
     type: String,
@@ -15,6 +16,11 @@ const userSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.models.User || mongoose.model('User', userSchema);
+
+
+});
+
+module.exports = mongoose.model('User', userSchema);
 
 
 

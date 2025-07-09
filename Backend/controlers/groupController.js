@@ -3,7 +3,6 @@ const User = require('../models/user');
 
 
 
-//  Create a new group
 exports.createGroup = async (req, res) => {
   try {
     const { title, subject, description } = req.body;
@@ -108,7 +107,4 @@ exports.deleteGroup = async (req, res) => {
     console.error("❌ Failed to delete group:", err);
     res.status(500).json({ error: 'Failed to delete group' });
   }
-
-};
-
 

@@ -9,7 +9,11 @@ import {
   CardContent,
   Alert
 } from '@mui/material';
+
 import { useNavigate, useParams } from 'react-router-dom';
+
+import { useParams } from 'react-router-dom';
+
 import axios from '../utils/axios';
 
 const UserManage = () => {
@@ -19,7 +23,9 @@ const UserManage = () => {
   const [message, setMessage] = useState('');
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+
   const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -72,6 +78,7 @@ const UserManage = () => {
       setError('Failed to send notification');
     }
   };
+
   
   const handleDelete = async () => {
   if (!window.confirm("Are you sure you want to delete this user?")) return;
@@ -90,6 +97,7 @@ const UserManage = () => {
     setError('Failed to delete user');
   }
 };
+
 
   if (!user && !error) {
     return <Typography sx={{ p: 4, color: 'white' }}>Loading...</Typography>;
@@ -191,6 +199,7 @@ const UserManage = () => {
             </CardContent>
           </Card>
         </Grid>
+
         <Grid item>
   <Card
     elevation={6}
@@ -214,6 +223,7 @@ const UserManage = () => {
     </CardContent>
   </Card>
 </Grid>
+
 
       </Grid>
     </Box>

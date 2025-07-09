@@ -31,6 +31,7 @@ exports.approveGroup = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const userId = req.params.id;
+
     const deletedUser = await User.findByIdAndDelete(userId);
 
     if (deletedUser) {
@@ -42,9 +43,16 @@ exports.deleteUser = async (req, res) => {
     res.json({ message: 'User deleted successfully' });
   } catch (err) {
     console.error('❌ Delete user error:', err.message);
+
+    await User.findByIdAndDelete(userId);
+    res.json({ message: 'User deleted successfully' });
+  } catch (err) {
+    console.error('Delete user error:', err.message);
+
     res.status(500).json({ error: 'Failed to delete user' });
   }
 };
+
 
 
 exports.getAllGroups = async (req, res) => {
@@ -55,7 +63,11 @@ exports.getAllGroups = async (req, res) => {
     res.status(500).json({ error: 'Failed to load group data' });
   }
 
+
 };
 
 
+
+=======
+};
 
