@@ -7,7 +7,7 @@ const authRoutes = require('./routes/authRoutes');
 const groupRoutes = require('./routes/groupRoutes');
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
-
+const materialRoutes = require('./routes/MaterialRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 
 const notificationRoutes = require('./routes/notifications'); 
@@ -24,8 +24,11 @@ app.use(cors({
 
 app.use(express.json());
 
-
+app.use('/api/messages', require('./routes/messageRoutes'));
 app.use('/api/messages', messageRoutes);
+app.use('/api/materials', require('./routes/MaterialRoutes'));
+app.use('/api/materials', materialRoutes);
+
 
 
 // ✅ Register routes with correct base paths

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SettingsIcon from '@mui/icons-material/Settings';
+import axios from 'axios';
 
 const GroupDetails = () => {
   const location = useLocation();
@@ -23,16 +24,11 @@ const GroupDetails = () => {
   const { state } = location || {};
   const { title, subject, description, groupId } = state || {};
 
-  const [messages, setMessages] = useState([
-    { text: 'Welcome to the group!', sender: 'Admin' },
-    { text: "Let's start learning React!", sender: 'Riya Benny' },
-  ]);
+  const [messages, setMessages] = useState([]);
   const [newMsg, setNewMsg] = useState('');
-  const [materials, setMaterials] = useState([
-    { link: 'https://reactjs.org', uploader: 'Admin' },
-  ]);
+  const [materials, setMaterials] = useState([]);
   const [newMaterial, setNewMaterial] = useState('');
-  const [members] = useState(['Riya Benny', 'Dayona', 'Jofia', 'Karthik']);
+  const [members, setMembers] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleSettingsClick = (event) => setAnchorEl(event.currentTarget);
@@ -46,17 +42,86 @@ const GroupDetails = () => {
     }
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (newMsg.trim() === '') return;
-    setMessages([...messages, { text: newMsg, sender: 'You' }]);
-    setNewMsg('');
+    try {
+      await axios.post('/api/messages', {
+        groupId,
+        content: newMsg,
+        type: 'text',
+      }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      setNewMsg('');
+      fetchMessages();
+    } catch (err) {
+      console.error('Failed to send message:', err);
+      alert('Failed to send message');
+    }
   };
 
-  const handleAddMaterial = () => {
+  const handleAddMaterial = async () => {
     if (newMaterial.trim() === '') return;
-    setMaterials([...materials, { link: newMaterial, uploader: 'You' }]);
-    setNewMaterial('');
+    try {
+      await axios.post('/api/materials', {
+        groupId,
+        link: newMaterial,
+      }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      setNewMaterial('');
+      fetchMaterials();
+    } catch (err) {
+      console.error('Failed to add material:', err);
+      alert('Failed to add material');
+    }
   };
+
+  const fetchMessages = async () => {
+    try {
+      const res = await axios.get(`/api/messages/${groupId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      setMessages(res.data.length > 0 ? res.data : [
+        { content: 'Welcome to the group!', senderId: { name: 'Admin' } },
+        { content: "Let's start learning React!", senderId: { name: 'Riya Benny' } },
+      ]);
+    } catch (err) {
+      console.error("Failed to fetch messages:", err);
+    }
+  };
+
+  const fetchMaterials = async () => {
+    try {
+      const res = await axios.get(`/api/materials/${groupId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      setMaterials(res.data.length > 0 ? res.data : [
+        { link: 'https://reactjs.org', uploaderId: { name: 'Admin' } },
+      ]);
+    } catch (err) {
+      console.error("Failed to fetch materials:", err);
+    }
+  };
+
+  const fetchMembers = async () => {
+    try {
+      const res = await axios.get(`/api/groups/${groupId}/members`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      setMembers(res.data.length > 0 ? res.data : ['Riya Benny', 'Dayona', 'Jofia', 'Karthik']);
+    } catch (err) {
+      console.error('Failed to fetch members:', err);
+    }
+  };
+
+  useEffect(() => {
+    if (groupId) {
+      fetchMessages();
+      fetchMaterials();
+      fetchMembers();
+    }
+  }, [groupId]);
 
   if (!title) {
     return (
@@ -94,7 +159,7 @@ const GroupDetails = () => {
         <List sx={{ maxWidth: 300 }}>
           {members.map((m, idx) => (
             <ListItem key={idx} sx={{ pl: 0 }}>
-              <ListItemText primary={m} />
+              <ListItemText primary={typeof m === 'string' ? m : m.name} />
             </ListItem>
           ))}
         </List>
@@ -105,7 +170,7 @@ const GroupDetails = () => {
         <Box sx={{ maxWidth: 600, mt: 2 }}>
           {messages.map((msg, idx) => (
             <Typography key={idx} sx={{ mb: 1 }}>
-              <strong>{msg.sender}:</strong> {msg.text}
+              <strong>{msg.senderId?.name || msg.sender || 'You'}:</strong> {msg.content || msg.text}
             </Typography>
           ))}
           <TextField
@@ -128,7 +193,7 @@ const GroupDetails = () => {
             <Typography key={idx} sx={{ mb: 1 }}>
               <a href={mat.link} target="_blank" rel="noreferrer" style={{ color: '#90caf9' }}>
                 {mat.link}
-              </a> <em>by {mat.uploader}</em>
+              </a> <em>by {mat.uploaderId?.name || mat.uploader || 'You'}</em>
             </Typography>
           ))}
           <TextField
