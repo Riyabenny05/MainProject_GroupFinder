@@ -27,6 +27,6 @@ module.exports = authMiddleware;
 
 module.exports = authMiddleware;
 
-=======
+
 module.exports = authMiddleware;
 

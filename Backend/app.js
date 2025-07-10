@@ -34,7 +34,7 @@ app.use('/api/messages', require('./routes/messageRoutes'));
 app.use('/api/messages', messageRoutes);
 app.use('/api/materials', require('./routes/MaterialRoutes'));
 app.use('/api/materials', materialRoutes);
-
+  app.use('/api/auth', require('./routes/authRoutes'));
 
 
 

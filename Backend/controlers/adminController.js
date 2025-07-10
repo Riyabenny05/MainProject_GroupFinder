@@ -43,12 +43,6 @@ exports.deleteUser = async (req, res) => {
     res.json({ message: 'User deleted successfully' });
   } catch (err) {
     console.error('❌ Delete user error:', err.message);
-
-    await User.findByIdAndDelete(userId);
-    res.json({ message: 'User deleted successfully' });
-  } catch (err) {
-    console.error('Delete user error:', err.message);
-
     res.status(500).json({ error: 'Failed to delete user' });
   }
 };
@@ -68,6 +62,6 @@ exports.getAllGroups = async (req, res) => {
 
 
 
-=======
-};
+
+
 
