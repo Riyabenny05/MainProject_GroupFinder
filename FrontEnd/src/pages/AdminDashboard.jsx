@@ -38,7 +38,7 @@ import {
     Close as CloseIcon,
     Settings as SettingsIcon
 } from '@mui/icons-material';
-
+import group from '../pages/GroupDetails';
 const AdminDashboard = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -96,7 +96,18 @@ const AdminDashboard = () => {
         "Rejection failed"
     );
 
-    const handleViewGroup = (group) => navigate(`/group/${group._id}`, { state: { ...group } });
+    //const handleViewGroup = (group) => navigate(`/group/${group._id}`, { state: { ...group } });
+    const handleViewGroup = (group) => {
+  navigate("group/:id", {
+    state: {
+      groupId: group._id,
+      title: group.title,
+      subject: group.subject,
+      description: group.description,
+    },
+  });
+};
+
     const handleManageUser = (id) => navigate(`/admin/users/${id}`);
 
     const sortedAndFilteredGroups = [...groups]

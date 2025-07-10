@@ -36,7 +36,7 @@ function App() {
         <Route path="/group/:id" element={<GroupDetails />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
        <Route path="/profile" element={<Profile />} />
-
+<Route path="/admin-dashboard/group/:id" element={<GroupDetails />} />
         {/* Admin Protected Routes */}
         <Route
           path="/admin-dashboard"
