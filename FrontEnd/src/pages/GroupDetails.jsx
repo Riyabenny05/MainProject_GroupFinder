@@ -1,8 +1,4 @@
-
 import React, { useState, useEffect } from 'react';
-
-import React, { useState } from 'react';
-
 import {
   Box,
   Typography,
@@ -20,9 +16,7 @@ import {
 } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SettingsIcon from '@mui/icons-material/Settings';
-
 import axios from 'axios';
-
 
 const GroupDetails = () => {
   const location = useLocation();
@@ -30,24 +24,11 @@ const GroupDetails = () => {
   const { state } = location || {};
   const { title, subject, description, groupId } = state || {};
 
-
   const [messages, setMessages] = useState([]);
   const [newMsg, setNewMsg] = useState('');
   const [materials, setMaterials] = useState([]);
   const [newMaterial, setNewMaterial] = useState('');
   const [members, setMembers] = useState([]);
-
-  const [messages, setMessages] = useState([
-    { text: 'Welcome to the group!', sender: 'Admin' },
-    { text: "Let's start learning React!", sender: 'Riya Benny' },
-  ]);
-  const [newMsg, setNewMsg] = useState('');
-  const [materials, setMaterials] = useState([
-    { link: 'https://reactjs.org', uploader: 'Admin' },
-  ]);
-  const [newMaterial, setNewMaterial] = useState('');
-  const [members] = useState(['Riya Benny', 'Dayona', 'Jofia', 'Karthik']);
-
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleSettingsClick = (event) => setAnchorEl(event.currentTarget);
@@ -60,7 +41,6 @@ const GroupDetails = () => {
       navigate('/Home');
     }
   };
-
 
   const handleSendMessage = async () => {
     if (newMsg.trim() === '') return;
@@ -146,25 +126,7 @@ const GroupDetails = () => {
   if (!title) {
     return (
       <Box sx={{ color: 'white', backgroundColor: 'black', minHeight: '100vh', p: 4 }}>
-        <Typography variant="h6">No group data available! Please try again.</Typography>
-
-  const handleSendMessage = () => {
-    if (newMsg.trim() === '') return;
-    setMessages([...messages, { text: newMsg, sender: 'You' }]);
-    setNewMsg('');
-  };
-
-  const handleAddMaterial = () => {
-    if (newMaterial.trim() === '') return;
-    setMaterials([...materials, { link: newMaterial, uploader: 'You' }]);
-    setNewMaterial('');
-  };
-
-  if (!title) {
-    return (
-      <Box sx={{ color: 'white', backgroundColor: 'black', minHeight: '100vh', p: 4 }}>
         <Typography variant="h6">No group data available. Please try again.</Typography>
-
       </Box>
     );
   }
@@ -198,9 +160,6 @@ const GroupDetails = () => {
           {members.map((m, idx) => (
             <ListItem key={idx} sx={{ pl: 0 }}>
               <ListItemText primary={typeof m === 'string' ? m : m.name} />
-
-              <ListItemText primary={m} />
-
             </ListItem>
           ))}
         </List>
@@ -211,10 +170,7 @@ const GroupDetails = () => {
         <Box sx={{ maxWidth: 600, mt: 2 }}>
           {messages.map((msg, idx) => (
             <Typography key={idx} sx={{ mb: 1 }}>
-
               <strong>{msg.senderId?.name || msg.sender || 'You'}:</strong> {msg.content || msg.text}
-              <strong>{msg.sender}:</strong> {msg.text}
-
             </Typography>
           ))}
           <TextField
@@ -238,9 +194,6 @@ const GroupDetails = () => {
               <a href={mat.link} target="_blank" rel="noreferrer" style={{ color: '#90caf9' }}>
                 {mat.link}
               </a> <em>by {mat.uploaderId?.name || mat.uploader || 'You'}</em>
-
-              </a> <em>by {mat.uploader}</em>
-
             </Typography>
           ))}
           <TextField

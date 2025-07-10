@@ -240,5 +240,4 @@ setGroups([...res.data.filter(g => g.approved), ...dummyGroups]);
 
 export default Home;
 
-export default Home;
 
