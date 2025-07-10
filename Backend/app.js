@@ -36,6 +36,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/groups', groupRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/auth', require('./routes/authRoutes'));
 
 
 app.use('/api/notifications', require('./routes/notifications'));
