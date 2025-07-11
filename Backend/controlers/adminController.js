@@ -1,4 +1,4 @@
-const User = require('../models/user');
+const User = require('../models/User');
 const Group = require('../models/Group');
 
 // ✅ Get all users (for admin)
