@@ -15,7 +15,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 import Box from '@mui/material/Box';
 import Profile from './pages/Profile'; 
-// 🔴 Make sure these are created and exported properly
+
 import UserManage from './pages/UserManage'; 
 import Unauthorized from './pages/Unauthorized';
 

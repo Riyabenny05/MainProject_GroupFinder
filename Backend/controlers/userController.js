@@ -1,4 +1,4 @@
-// controllers/userController.js
+// controlers/userController.js
 const User = require('../models/user');
 
 // ✅ Get user by ID
