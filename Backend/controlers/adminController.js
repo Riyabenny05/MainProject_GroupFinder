@@ -46,6 +46,25 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
+// Admin updates any user (name, contact, avatar)
+exports.updateUserByAdmin = async (req, res) => {
+  const { name, contact, avatar } = req.body;
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { name, contact, avatar },
+      { new: true }
+    ).select('-password');
+
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 
 exports.getAllGroups = async (req, res) => {
   try {

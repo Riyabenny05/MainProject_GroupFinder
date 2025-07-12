@@ -15,7 +15,7 @@ import axios from '../utils/axios';
 const UserManage = () => {
   const { id } = useParams();
   const [user, setUser] = useState(null);
-  const [editData, setEditData] = useState({ name: '', email: '' });
+  const [editData, setEditData] = useState({ name: '', contact: '', avatar: '' });
   const [message, setMessage] = useState('');
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
@@ -31,7 +31,7 @@ const UserManage = () => {
         const foundUser = res.data.find((u) => u._id === id);
         if (foundUser) {
           setUser(foundUser);
-          setEditData({ name: foundUser.name, email: foundUser.email });
+          setEditData({ name: foundUser.name, contact: foundUser.contact || '', avatar: foundUser.avatar || '' });
         } else {
           setError('User not found');
         }
@@ -44,17 +44,22 @@ const UserManage = () => {
   }, [id]);
 
   const handleUpdate = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.put(`/users/${id}`, editData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setSuccess('✅ Profile updated');
-      setTimeout(() => setSuccess(''), 3000);
-    } catch (err) {
-      setError('Failed to update user');
-    }
-  };
+  try {
+    const token = localStorage.getItem('token');
+    await axios.put(`/admin/users/${id}`, {
+      name: editData.name,
+      contact: editData.contact,
+      avatar: editData.avatar,
+    }, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setSuccess('✅ Profile updated');
+    setTimeout(() => setSuccess(''), 3000);
+  } catch (err) {
+    setError('Failed to update user');
+  }
+};
+
 
   const handleSend = async () => {
     try {
@@ -132,29 +137,55 @@ const UserManage = () => {
           >
             <CardContent>
               <Typography variant="h6" gutterBottom>✏️ Edit Profile</Typography>
-              <TextField
-                fullWidth
-                label="Name"
-                variant="outlined"
-                value={editData.name}
-                onChange={(e) => setEditData({ ...editData, name: e.target.value })}
-                margin="normal"
-                InputLabelProps={{ style: { color: '#aaa' } }}
-                sx={{ input: { color: 'white' } }}
-              />
-              <TextField
-                fullWidth
-                label="Email"
-                variant="outlined"
-                value={editData.email}
-                onChange={(e) => setEditData({ ...editData, email: e.target.value })}
-                margin="normal"
-                InputLabelProps={{ style: { color: '#aaa' } }}
-                sx={{ input: { color: 'white' } }}
-              />
-              <Button variant="contained" onClick={handleUpdate} sx={{ mt: 2 }}>
-                Save Changes
-              </Button>
+
+<TextField
+  fullWidth
+  label="Name"
+  variant="outlined"
+  value={editData.name}
+  onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+  margin="normal"
+  InputLabelProps={{ style: { color: '#aaa' } }}
+  sx={{ input: { color: 'white' } }}
+/>
+
+<TextField
+  fullWidth
+  label="Phone Number"
+  variant="outlined"
+  value={editData.contact}
+  onChange={(e) => setEditData({ ...editData, contact: e.target.value })}
+  margin="normal"
+  InputLabelProps={{ style: { color: '#aaa' } }}
+  sx={{ input: { color: 'white' } }}
+/>
+
+<Typography sx={{ mt: 2, mb: 1 }}>Choose Avatar:</Typography>
+<Grid container spacing={2}>
+  {['default1.png', 'default2.png'].map((img) => (
+    <Grid item key={img}>
+      <Box
+        component="img"
+        src={`/avatars/${img}`}
+        alt={img}
+        sx={{
+          width: 80,
+          height: 80,
+          borderRadius: '50%',
+          border: editData.avatar === `/avatars/${img}` ? '3px solid #4caf50' : '2px solid #888',
+          cursor: 'pointer',
+        }}
+        onClick={() => setEditData({ ...editData, avatar: `/avatars/${img}` })}
+      />
+    </Grid>
+  ))}
+</Grid>
+
+
+<Button variant="contained" onClick={handleUpdate} sx={{ mt: 2 }}>
+  Save Changes
+</Button>
+
             </CardContent>
           </Card>
         </Grid>
