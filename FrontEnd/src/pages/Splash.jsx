@@ -130,7 +130,7 @@ const Splash = () => {
     }}
   >
     <Typography variant="h2" className="glow-text">
-      Welcome to MinGlo 🌐
+      Welcome to MinGlo🎗
     </Typography>
 
     <motion.div
@@ -367,7 +367,7 @@ const Splash = () => {
     <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: '#dda0dd' }}>
       Group Owners 👥
     </Typography>
-    <Typography variant="body1">👤 Ria Benny</Typography>
+    <Typography variant="body1">👤 Riya Benny</Typography>
     <Typography variant="body1">👤 Dayona Suby</Typography>
     <Typography variant="body1">👤 Jofia Treesa George</Typography>
     <Typography variant="body1">👤 Karthik G</Typography>
@@ -397,7 +397,7 @@ const Splash = () => {
             <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: '#dda0dd' }}>
               For Any Enquiries 📞
             </Typography>
-            <Typography variant="body1">📱 Ria Benny - 7847357690</Typography>
+            <Typography variant="body1">📱 Riya Benny - 7847357690</Typography>
             <Typography variant="body1">📱 Dayona Suby - 2351908746</Typography>
             <Typography variant="body1">📱 Jofia Treesa George - 5839627384</Typography>
             <Typography variant="body1">📱 Karthik G - 6749375070</Typography>
