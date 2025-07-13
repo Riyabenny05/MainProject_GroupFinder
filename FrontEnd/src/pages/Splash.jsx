@@ -130,7 +130,7 @@ const Splash = () => {
     }}
   >
     <Typography variant="h2" className="glow-text">
-      Welcome to MinGlo🎗
+      Welcome to MinGlo ♾
     </Typography>
 
     <motion.div

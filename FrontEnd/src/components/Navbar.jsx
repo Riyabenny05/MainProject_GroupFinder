@@ -38,7 +38,7 @@ const CustomNavbar = () => {
           fontFamily="italic"
           onClick={() => navigate(homePath)}
         >
-        🎗MinGlo
+        🔮MinGlo
         </Typography>
 
         <Box>
