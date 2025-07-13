@@ -2,12 +2,14 @@
 const express = require('express');
 const router = express.Router();
 const Group = require('../models/Group');
-const User = require('../models/User');
+const User = require('../models/user');
+const { isAdmin } = require('../middleware/roleMiddleware');
 
 const {
   getAllUsers,
   deleteUser,
   getAllGroups, // ✅ New controller
+  updateUserByAdmin
 } = require('../controlers/adminController');
 
 const authMiddleware = require('../middleware/authMiddleware');
@@ -20,6 +22,10 @@ router.delete('/users/:id', authMiddleware, roleMiddleware('admin'), deleteUser)
 // ✅ ✅ ✅ Admin Dashboard: Fetch all groups (for /api/admin/groups)
 router.get('/groups', authMiddleware, roleMiddleware('admin'), getAllGroups);
 
+console.log('updateUserByAdmin:', updateUserByAdmin);
+// PUT /admin/users/:id - Admin updates a user's name, contact, and avatar
+// adminRoutes.js
+router.put('/users/:id', authMiddleware, roleMiddleware('admin'), updateUserByAdmin);
 
 // ✅ Approve a group
 router.patch('/groups/:id/approve', authMiddleware, roleMiddleware('admin'), async (req, res) => {

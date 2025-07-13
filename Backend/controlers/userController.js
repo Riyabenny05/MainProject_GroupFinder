@@ -1,5 +1,5 @@
 // controlers/userController.js
-const User = require('../models/User');
+const User = require('../models/user');
 
 // ✅ Get user by ID
 exports.getUserById = async (req, res) => {

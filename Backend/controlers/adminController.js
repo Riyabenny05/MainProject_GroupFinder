@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const User = require('../models/user');
 const Group = require('../models/Group');
 
 // ✅ Get all users (for admin)
@@ -43,6 +43,25 @@ exports.deleteUser = async (req, res) => {
   } catch (err) {
     console.error('❌ Delete user error:', err.message);
     res.status(500).json({ error: 'Failed to delete user' });
+  }
+};
+
+// Admin updates any user (name, contact, avatar)
+exports.updateUserByAdmin = async (req, res) => {
+  const { name, contact, avatar } = req.body;
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { name, contact, avatar },
+      { new: true }
+    ).select('-password');
+
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
 
